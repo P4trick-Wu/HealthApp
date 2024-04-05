@@ -17,6 +17,8 @@ initializePassport(passport);
 
 // Parses details from a form
 app.use(express.urlencoded({ extended: false }));
+// Serve static files from public folder
+app.use(express.static("public"));
 
 
 app.set("view engine", "ejs");
@@ -41,22 +43,22 @@ app.get("/", (req, res) => {
   res.render("index");
 });
 
-app.get("/users/register", checkAuthenticated, (req, res) => {
+app.get("/register", checkAuthenticated, (req, res) => {
   res.render("register.ejs");
 });
 
-app.get("/users/login", checkAuthenticated, (req, res) => {
+app.get("/login", checkAuthenticated, (req, res) => {
   // flash sets a messages variable. passport sets the error message
   console.log(req.session.flash.error);
   res.render("login.ejs");
 });
 
-app.get("/users/dashboard", checkNotAuthenticated, (req, res) => {
+app.get("/dashboard", checkNotAuthenticated, (req, res) => {
   console.log(req.isAuthenticated());
   res.render("dashboard", { user: req.user.name });
 });
 
-app.get("/users/logout", (req, res) => {
+app.get("/logout", (req, res) => {
   // req.logout();
   // res.render("index", { message: "You have logged out successfully" });
 
@@ -64,12 +66,12 @@ app.get("/users/logout", (req, res) => {
    req.logOut(function(err) {
         if (err) { return next(err); }
         req.flash("success_msg", "You have successfully logged out.");
-        res.redirect("/users/login");
+        res.redirect("/login");
     });
 
 });
 
-app.post("/users/register", async (req, res) => {
+app.post("/register", async (req, res) => {
   let { name, email, password, password2 } = req.body;
 
   let errors = [];
@@ -125,7 +127,7 @@ app.post("/users/register", async (req, res) => {
               }
               console.log(results.rows);
               req.flash("success_msg", "You are now registered. Please log in");
-              res.redirect("/users/login");
+              res.redirect("/login");
             }
           );
         }
@@ -135,17 +137,17 @@ app.post("/users/register", async (req, res) => {
 });
 
 app.post(
-  "/users/login",
+  "/login",
   passport.authenticate("local", {
-    successRedirect: "/users/dashboard",
-    failureRedirect: "/users/login",
+    successRedirect: "/dashboard",
+    failureRedirect: "/login",
     failureFlash: true
   })
 );
 
 function checkAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
-    return res.redirect("/users/dashboard");
+    return res.redirect("/dashboard");
   }
   next();
 }
@@ -154,7 +156,7 @@ function checkNotAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
   }
-  res.redirect("/users/login");
+  res.redirect("/login");
 }
 
 app.listen(PORT, () => {
