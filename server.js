@@ -57,12 +57,14 @@ app.get("/login", checkAuthenticated, (req, res) => {
 
 app.get("/dashboard", checkNotAuthenticated, (req, res) => {
   console.log(req.isAuthenticated());
-  // Sends user's name, saved stepcount and stepgoal to client
+  // Sends id, user's name, saved stepcount and stepgoal to client dashboard page
   res.render("dashboard", 
   { user: req.user.name,
     stepcount: req.user.stepcount,
-    stepgoal: req.user.stepgoal
+    stepgoal: req.user.stepgoal,
+    id: req.user.id
   });
+  
 });
 
 app.get("/logout", (req, res) => {
@@ -158,15 +160,53 @@ app.post(
 
 app.post("/submit-steps-data", (req, res) => {
 
-  const { stepCount, stepGoal } = req.body;
+  const { id, stepCount, stepGoal } = req.body;
 
   console.log(req.body)
 
   // Log the received data
-  console.log("Received data:", stepCount, stepGoal);
+  console.log("Received data:", stepCount, stepGoal, id);
 
   // Send a response back to the client
   res.status(200).send("Data received successfully");
+
+  
+  if(stepCount.length > 0) {
+    console.log(stepCount.length)
+    console.log(user.id)
+    // pool.query(
+    //   `UPDATE users
+    //   SET stepcount = $1
+    //   WHERE id = $2`,
+    //   [req.body.stepCount, req.body.id],
+    //   (err, results) => {
+    //     if (err) {
+    //       console.log(err);
+    //     }
+    //     console.log(results.rows);
+
+    //   }
+    // );
+  }
+  if(req.body.stepGoal > 0) {
+    // pool.query(
+    //   `UPDATE users
+    //   SET stepgoal = $1
+    //   WHERE id = $2`,
+    //   [req.body.stepGoal, req.body.id],
+    //   (err, results) => {
+    //     if (err) {
+    //       console.log(err);
+    //     }
+    //     console.log(results.rows);
+
+    //   }
+    // );
+  }
+
+  // Update daily steps and goals columsn in database (users table)
+
+
 });
 
 function checkAuthenticated(req, res, next) {
