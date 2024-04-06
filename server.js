@@ -19,6 +19,8 @@ initializePassport(passport);
 app.use(express.urlencoded({ extended: false }));
 // Serve static files from public folder
 app.use(express.static("public"));
+// Parse json bodies
+app.use(express.json())
 
 
 app.set("view engine", "ejs");
@@ -55,7 +57,12 @@ app.get("/login", checkAuthenticated, (req, res) => {
 
 app.get("/dashboard", checkNotAuthenticated, (req, res) => {
   console.log(req.isAuthenticated());
-  res.render("dashboard", { user: req.user.name });
+  // Sends user's name, saved stepcount and stepgoal to client
+  res.render("dashboard", 
+  { user: req.user.name,
+    stepcount: req.user.stepcount,
+    stepgoal: req.user.stepgoal
+  });
 });
 
 app.get("/logout", (req, res) => {
@@ -116,6 +123,7 @@ app.post("/register", async (req, res) => {
             message: "Email already registered"
           });
         } else {
+          // INserts user details into databbase
           pool.query(
             `INSERT INTO users (name, email, password, usertype)
                 VALUES ($1, $2, $3, $4)
@@ -144,6 +152,22 @@ app.post(
     failureFlash: true
   })
 );
+
+// other post functions
+
+
+app.post("/submit-steps-data", (req, res) => {
+
+  const { stepCount, stepGoal } = req.body;
+
+  console.log(req.body)
+
+  // Log the received data
+  console.log("Received data:", stepCount, stepGoal);
+
+  // Send a response back to the client
+  res.status(200).send("Data received successfully");
+});
 
 function checkAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
