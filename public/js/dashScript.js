@@ -1,6 +1,8 @@
 // listener for update steps form
 document.getElementById("stepsUpdateButton").addEventListener("click", updateSteps);
 
+
+// Updates user step data
 function updateSteps() {
     console.log("update steps called");
 
@@ -36,6 +38,4 @@ function updateSteps() {
         console.error('Error: ', error.message);
     });
 
-
-    
 }

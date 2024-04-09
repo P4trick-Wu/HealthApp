@@ -20,6 +20,13 @@ function initialize(passport) {
         if (results.rows.length > 0) {
           const user = results.rows[0];
 
+          //Checks if user is a trainer, bypass encryption if trainer password matches
+          if(user.usertype === 'trainer') {
+            if (user.password == password) {
+              return done(null, user);
+            } 
+          }
+
           // Compares encrypted password stored in data base with user entered password
           bcrypt.compare(password, user.password, (err, isMatch) => {
             if (err) {

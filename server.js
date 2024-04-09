@@ -55,10 +55,10 @@ app.get("/login", checkAuthenticated, (req, res) => {
   res.render("login.ejs");
 });
 
-app.get("/dashboard", checkNotAuthenticated, (req, res) => {
+app.get("/memdashboard", checkNotAuthenticated, (req, res) => {
   console.log(req.isAuthenticated());
-  // Sends id, user's name, saved stepcount and stepgoal to client dashboard page
-  res.render("dashboard", 
+  // Sends id, user's name, saved stepcount and stepgoal to client memdashboard page
+  res.render("memdashboard", 
   { user: req.user.name,
     stepcount: req.user.stepcount,
     stepgoal: req.user.stepgoal,
@@ -66,6 +66,19 @@ app.get("/dashboard", checkNotAuthenticated, (req, res) => {
   });
   
 });
+
+app.get("/trainerdashboard", checkNotAuthenticated, (req, res) => {
+  console.log(req.isAuthenticated());
+  // Sends id, user's name, saved stepcount and stepgoal to client mtrainerdashboard page
+  res.render("trainerdashboard", 
+  { user: req.user.name,
+    stepcount: req.user.stepcount,
+    stepgoal: req.user.stepgoal,
+    id: req.user.id
+  });
+  
+});
+
 
 app.get("/logout", (req, res) => {
   // req.logout();
@@ -146,16 +159,30 @@ app.post("/register", async (req, res) => {
   }
 });
 
+// Handles login request from client
 app.post(
   "/login",
   passport.authenticate("local", {
-    successRedirect: "/dashboard",
+    // successRedirect: "/trainerdashboard",
     failureRedirect: "/login",
     failureFlash: true
-  })
+  }),
+  // Directs member to member dash and trainer to trainer dash
+  (req, res) => {
+
+    if (req.user.usertype === 'trainer') {
+      res.redirect("/trainerdashboard");
+    } else {
+      res.redirect("/memdashboard");
+    }
+  }
 );
 
-// other post functions
+//trainer dashboard post requests
+
+
+
+// member dashboard post requests
 
 // update user current daily steps and step goals
 app.post("/submit-steps-data", (req, res) => {
@@ -207,7 +234,12 @@ app.post("/submit-steps-data", (req, res) => {
 
 function checkAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
-    return res.redirect("/dashboard");
+    // check user type, redirect to correct dash if already logged in on client
+    if(req.user.usertype == 'member') {
+      return res.redirect("/memdashboard");
+    } else {
+      return res.redirect("/trainerdashboard");
+    }
   }
   next();
 }
