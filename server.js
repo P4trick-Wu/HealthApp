@@ -157,54 +157,50 @@ app.post(
 
 // other post functions
 
-
+// update user current daily steps and step goals
 app.post("/submit-steps-data", (req, res) => {
 
-  const { id, stepCount, stepGoal } = req.body;
+  const { stepCount, stepGoal } = req.body;
+  const id = req.user.id
 
   console.log(req.body)
 
   // Log the received data
-  console.log("Received data:", stepCount, stepGoal, id);
+  console.log("Received data:", stepCount, stepGoal, " for user ", id);
 
   // Send a response back to the client
   res.status(200).send("Data received successfully");
 
-  
+  // Update steps database values for user in users table, only updates if user entered a value in the textbox
   if(stepCount.length > 0) {
-    console.log(stepCount.length)
-    console.log(user.id)
-    // pool.query(
-    //   `UPDATE users
-    //   SET stepcount = $1
-    //   WHERE id = $2`,
-    //   [req.body.stepCount, req.body.id],
-    //   (err, results) => {
-    //     if (err) {
-    //       console.log(err);
-    //     }
-    //     console.log(results.rows);
-
-    //   }
-    // );
+    
+    // Queries values 
+    pool.query(
+      `UPDATE users
+      SET stepcount = $1
+      WHERE id = $2`,
+      [stepCount, id],
+      (err, results) => {
+        if (err) {
+          console.log(err);
+        }
+      }
+    );
   }
-  if(req.body.stepGoal > 0) {
-    // pool.query(
-    //   `UPDATE users
-    //   SET stepgoal = $1
-    //   WHERE id = $2`,
-    //   [req.body.stepGoal, req.body.id],
-    //   (err, results) => {
-    //     if (err) {
-    //       console.log(err);
-    //     }
-    //     console.log(results.rows);
-
-    //   }
-    // );
+  if(stepGoal.length > 0) {
+    
+    pool.query(
+      `UPDATE users
+      SET stepgoal = $1
+      WHERE id = $2`,
+      [stepGoal, id],
+      (err, results) => {
+        if (err) {
+          console.log(err);
+        }
+      }
+    );
   }
-
-  // Update daily steps and goals columsn in database (users table)
 
 
 });

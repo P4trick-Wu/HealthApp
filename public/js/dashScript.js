@@ -1,7 +1,7 @@
 // listener for update steps form
 document.getElementById("stepsUpdateButton").addEventListener("click", updateSteps);
 
-async function updateSteps() {
+function updateSteps() {
     console.log("update steps called");
 
     // Get the values from the input fields
@@ -17,6 +17,9 @@ async function updateSteps() {
     // console.log(data);
 
     // Update steps data on webpage
+    document.getElementById('stepCountText').innerHTML = stepCount;
+    document.getElementById('stepGoalText').innerHTML = stepGoal;
+
 
     // send post request updating steps data to database
     fetch('/submit-steps-data', {
