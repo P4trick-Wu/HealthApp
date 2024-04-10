@@ -70,6 +70,9 @@ app.get("/memdashboard", checkNotAuthenticated, (req, res) => {
 app.get("/trainerdashboard", checkNotAuthenticated, (req, res) => {
   console.log(req.isAuthenticated());
 
+
+  let userList = [];
+  let trainerSessions = [];
   // Gets list of all users
   pool.query(
       `SELECT * FROM users ORDER by name ASC`,
@@ -79,26 +82,25 @@ app.get("/trainerdashboard", checkNotAuthenticated, (req, res) => {
         }
 
         // Puts corresponding name and email of members from results into a list
-        const userList = results.rows.map(user => ({
+        userList = results.rows.map(user => ({
           name: user.name,
           email: user.email
         }));
 
-        // console.log(userList)
-
-        // Sends data to trainerdashboard page
+         // Sends data to trainerdashboard page
         res.render("trainerdashboard", 
-        { user: req.user.name,
-          stepcount: req.user.stepcount,
-          stepgoal: req.user.stepgoal,
-          id: req.user.id,
+          { user: req.user.name,
+            stepcount: req.user.stepcount,
+            stepgoal: req.user.stepgoal,
+            id: req.user.id,
 
-          // Send list of members to dashboard
-          members: userList
+            // Send list of members to dashboard
+            members: userList
         });
 
-    
-      });
+        // console.log(userList)
+  });
+
   
 });
 
@@ -203,6 +205,37 @@ app.post(
 
 //trainer dashboard post requests
 
+app.post("/view-schedules", (req, res) => {
+
+    // Gets list of all users with matching mame
+    pool.query(
+      `SELECT * FROM schedules
+        WHERE trainerid = $1`,
+      [req.user.id]
+      ,
+      (err, results) => {
+        if (err) {
+          console.log(err);
+        }
+
+        // Puts corresponding session title, cost, times and num users back to client
+        const schedule = results.rows.map(user => ({
+          title: user.title,
+          cost: user.cost,
+          date: user.seshdate,
+          start: user.starttime,
+          seshid: user.scheduleid,
+          member: user.userid
+
+      
+        }));
+
+        // sends data back to client
+        res.json({ data: schedule });
+
+      }); 
+});
+
 // upload new schedule into database 
 app.post("/new-schedule-data", (req, res) => {
 
@@ -272,7 +305,8 @@ app.post("/find-members", (req, res) => {
         // Puts corresponding name and email of members from results into a list
         const userList = results.rows.map(user => ({
           name: user.name,
-          email: user.email
+          email: user.email,
+          id: user.id
         }));
 
         // console.log(userList)

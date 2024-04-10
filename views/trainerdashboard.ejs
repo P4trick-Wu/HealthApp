@@ -25,15 +25,24 @@
     <h5>ID: <%= id %></h5>
     <h5>Usertype: Trainer</h5>
 
-    <!-- uploading new schedule card -->
-    <div class="card" style="width: 18rem">
+    <!-- Schedule management card card -->
+    <div class="card" style="width: 25rem">
       <div class="card-body">
-        <h5 class="card-title">Schedules</h5>
+        <h5 class="card-title">Your schedule</h5>
 
-        <!-- Display all schedules -->
+        <p class="card-text">View your sessions</p>
 
+        <a href="#" class="btn btn-primary" id="viewSchedulesButton"
+          >Get Sessions</a
+        >
+      </div>
+
+      <!-- List of sessions -->
+      <ul id="sessionsList"></ul>
+
+      <div class="card-body">
         <h6 class="card-subtitle mb-2 text-body-secondary">
-          Set schedule below!
+          Set new schedule below!
         </h6>
         <!-- Modal for creating and uploading a new availalbe session schedule -->
         <button
