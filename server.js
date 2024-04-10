@@ -189,12 +189,42 @@ app.post("/new-schedule-data", (req, res) => {
 
   console.log(req.body)
 
+  // parse datetime-local string into date and time compnents
+  const datetime = new Date(dateTime);
 
-  console.log("received data: ", title, dateTime, endTime, cost, " from user ", id);
+  // Date components
+  const year = datetime.getFullYear();
+  const month = datetime.getMonth() + 1; 
+  const day = datetime.getDate();
 
-  //Send response back to client
-  res.status(200).send("Data received successfully");
+  // time components
+  const hours = datetime.getHours();
+  const minutes = datetime.getMinutes();
 
+  // time for end time
+  const [endHours, endMinutes] = endTime.split(":");
+
+  // construct AQL date and time
+  const sqlDate = `${year}-${month}-${day}`;
+  const sqlStartTime = `${hours}:${minutes}`;
+  const sqlEndTime = `${endHours}:${endMinutes}`;
+
+  // console.log("received data: ", title, sqlDate, sqlStartTime, sqlEndTime, cost, " from user ", id);
+
+  // queries values into database, creating a new schedule 
+  pool.query(
+    `INSERT INTO schedules (cost, seshdate, starttime, endtime, trainerid, title)
+        VALUES ($1, $2, $3, $4, $5, $6)`,
+    [cost, sqlDate, sqlStartTime, sqlEndTime, id, title ],
+    (err, results) => {
+      if (err) {
+        res.status(404).send("Error uplodaing to database");
+        throw err;
+      }
+        //Send response back to client
+        res.status(200).send("Data received successfully");
+    }
+  );
 
 });
 
