@@ -179,6 +179,24 @@ app.post(
 );
 
 //trainer dashboard post requests
+app.post("/new-schedule-data", (req, res) => {
+
+  const title = req.body.newTitle;
+  const dateTime = req.body.newDateTime;
+  const endTime = req.body.newEndTime;
+  const cost = req.body.newCost;
+  const id = req.user.id
+
+  console.log(req.body)
+
+
+  console.log("received data: ", title, dateTime, endTime, cost, " from user ", id);
+
+  //Send response back to client
+  res.status(200).send("Data received successfully");
+
+
+});
 
 
 
@@ -190,7 +208,7 @@ app.post("/submit-steps-data", (req, res) => {
   const { stepCount, stepGoal } = req.body;
   const id = req.user.id
 
-  console.log(req.body)
+  // console.log(req.body)
 
   // Log the received data
   console.log("Received data:", stepCount, stepGoal, " for user ", id);

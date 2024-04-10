@@ -19,8 +19,13 @@ function updateSteps() {
     // console.log(data);
 
     // Update steps data on webpage
-    document.getElementById('stepCountText').innerHTML = stepCount;
-    document.getElementById('stepGoalText').innerHTML = stepGoal;
+    if (stepCount > 0) {
+        document.getElementById('stepCountText').innerHTML = stepCount;
+    }
+    if(stepGoal > 0) {
+        document.getElementById('stepGoalText').innerHTML = stepGoal;
+    }
+
 
 
     // send post request updating steps data to database

@@ -28,23 +28,21 @@
     <!-- Steps counter card -->
     <div class="card" style="width: 18rem">
       <div class="card-body">
-        <h5 class="card-title">Steps</h5>
-        <h6 class="card-subtitle mb-2 text-body-secondary">
-          Steps taken today
-        </h6>
-        <p class="card-text" id="stepCountText"><%= stepcount %></p>
-        <h6 class="card-subtitle mb-2 text-body-secondary">Daily steps goal</h6>
-        <p class="card-text" id="stepGoalText"><%= stepgoal %></p>
+        <h5 class="card-title">Schedules</h5>
 
-        <!-- Modal for updating data -->
-        <!-- Button trigger modal -->
+        <!-- Display all schedules -->
+
+        <h6 class="card-subtitle mb-2 text-body-secondary">
+          Set schedule below!
+        </h6>
+        <!-- Modal for creating and uploading a new availalbe session schedule -->
         <button
           type="button"
           class="btn btn-primary"
           data-bs-toggle="modal"
           data-bs-target="#exampleModal"
         >
-          Update Data
+          Upload timeslot
         </button>
 
         <!-- Modal -->
@@ -60,25 +58,36 @@
               <!-- Input fields for updating data -->
               <div class="modal-body">
                 <form>
+                  <!-- session title -->
                   <div class="mb-3">
-                    <label for="updateStepCount" class="form-label"
-                      >Update step count</label
+                    <label for="newTitle" class="form-label">Title</label>
+                    <input type="text" class="form-control" id="newTitle" />
+                  </div>
+                  <!-- date, start time input -->
+                  <div class="mb-3">
+                    <label for="newDateTime" class="form-label"
+                      >Input date and start time</label
                     >
                     <input
-                      type="number"
+                      type="datetime-local"
                       class="form-control"
-                      id="updateStepCount"
-                      min="0"
+                      id="newDateTime"
                     />
                   </div>
+                  <!-- end time -->
                   <div class="mb-3">
-                    <label for="updateStepGoal" class="form-label"
-                      >Update daily step goal</label
+                    <label for="newEndTime" class="form-label"
+                      >Input end time</label
                     >
+                    <input type="time" class="form-control" id="newEndTime" />
+                  </div>
+                  <!-- session cost -->
+                  <div class="mb-3">
+                    <label for="newCost" class="form-label">session cost</label>
                     <input
                       type="number"
                       class="form-control"
-                      id="updateStepGoal"
+                      id="newCost"
                       min="0"
                     />
                   </div>
@@ -95,7 +104,7 @@
                 <button
                   type="button"
                   class="btn btn-primary"
-                  id="stepsUpdateButton"
+                  id="newScheduleButton"
                   data-bs-dismiss="modal"
                 >
                   Save changes
@@ -108,7 +117,7 @@
     </div>
   </body>
 
-  <script src="js/dashScript.js"></script>
+  <script src="js/trainerdashScript.js"></script>
 
   <script
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
