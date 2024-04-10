@@ -69,13 +69,36 @@ app.get("/memdashboard", checkNotAuthenticated, (req, res) => {
 
 app.get("/trainerdashboard", checkNotAuthenticated, (req, res) => {
   console.log(req.isAuthenticated());
-  // Sends id, user's name, saved stepcount and stepgoal to client mtrainerdashboard page
-  res.render("trainerdashboard", 
-  { user: req.user.name,
-    stepcount: req.user.stepcount,
-    stepgoal: req.user.stepgoal,
-    id: req.user.id
-  });
+
+  // Gets list of all users
+  pool.query(
+      `SELECT * FROM users ORDER by name ASC`,
+      (err, results) => {
+        if (err) {
+          console.log(err);
+        }
+
+        // Puts corresponding name and email of members from results into a list
+        const userList = results.rows.map(user => ({
+          name: user.name,
+          email: user.email
+        }));
+
+        // console.log(userList)
+
+        // Sends data to trainerdashboard page
+        res.render("trainerdashboard", 
+        { user: req.user.name,
+          stepcount: req.user.stepcount,
+          stepgoal: req.user.stepgoal,
+          id: req.user.id,
+
+          // Send list of members to dashboard
+          members: userList
+        });
+
+    
+      });
   
 });
 
@@ -179,6 +202,8 @@ app.post(
 );
 
 //trainer dashboard post requests
+
+// upload new schedule into database 
 app.post("/new-schedule-data", (req, res) => {
 
   const title = req.body.newTitle;
@@ -226,6 +251,35 @@ app.post("/new-schedule-data", (req, res) => {
     }
   );
 
+});
+
+// Finds users that match name entered from client, sends matching users back to client
+app.post("/find-members", (req, res) => {
+
+    const name = req.body.name;
+
+    // Gets list of all users with matching mame
+    pool.query(
+      `SELECT * FROM users
+        WHERE name LIKE '%' || $1 || '%' ORDER by name ASC`,
+      [name]
+      ,
+      (err, results) => {
+        if (err) {
+          console.log(err);
+        }
+
+        // Puts corresponding name and email of members from results into a list
+        const userList = results.rows.map(user => ({
+          name: user.name,
+          email: user.email
+        }));
+
+        // console.log(userList)
+        // sends data back to client
+        res.json({ members: userList });
+
+      }); 
 });
 
 

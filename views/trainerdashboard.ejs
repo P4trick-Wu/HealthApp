@@ -25,7 +25,7 @@
     <h5>ID: <%= id %></h5>
     <h5>Usertype: Trainer</h5>
 
-    <!-- Steps counter card -->
+    <!-- uploading new schedule card -->
     <div class="card" style="width: 18rem">
       <div class="card-body">
         <h5 class="card-title">Schedules</h5>
@@ -113,6 +113,31 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- card for members member profile viewing -->
+    <div class="card" style="width: 25rem">
+      <h5 class="card-header">Member profile viewing</h5>
+      <div class="card-body">
+        <p class="card-text">
+          Search for members by name. <br />Empty field returns all members
+        </p>
+
+        <div class="mb-3">
+          <input type="text" class="form-control" id="memberSearch" />
+        </div>
+        <a href="#" class="btn btn-primary" id="memberSearchButton">Search</a>
+      </div>
+      <div class="card-body">
+        <p class="card-text">Members:</p>
+
+        <!-- List of members -->
+        <ul id="membersList">
+          <% for (var i = 0; i < members.length ; i++) { %>
+          <li>Name: <%= members[i].name %>, Email: <%= members[i].email %></li>
+          <% } %>
+        </ul>
       </div>
     </div>
   </body>
