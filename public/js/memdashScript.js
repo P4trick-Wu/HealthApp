@@ -1,5 +1,34 @@
 // listener for update steps form
 document.getElementById("stepsUpdateButton").addEventListener("click", updateSteps);
+// listener for finding classes that user has not signed up for yet
+document.getElementById("findEvents").addEventListener("click", findEvents);
+
+
+// Retrieves all classes not signed up for by user, displaying them on dashboard
+function findEvents() {
+
+     // Send data object to server for processing
+    fetch('/find-events', {
+        method: 'POST',
+         headers: {
+            'Content-Type': 'application/json' 
+        },
+        // body: JSON.stringify(data)
+    }).then(response => {
+        console.log('Response status: ', response.status);
+        return response.json();
+    }).then(responseData => { 
+        // Process the JSON data received from the server, and update webpage
+        
+        const events = responseData.data;
+        console.log(events)
+
+
+    }).catch(error => {
+        // Something went wrong
+        console.error('Error: ', error.message);
+    });
+}
 
 
 // Updates user step data

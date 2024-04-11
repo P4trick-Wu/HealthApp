@@ -57,6 +57,9 @@ app.get("/login", checkAuthenticated, (req, res) => {
 
 app.get("/memdashboard", checkNotAuthenticated, (req, res) => {
   console.log(req.isAuthenticated());
+
+  //gets a list of your classes
+
   // Sends id, user's name, saved stepcount and stepgoal to client memdashboard page
   res.render("memdashboard", 
   { user: req.user.name,
@@ -337,6 +340,38 @@ app.post("/find-members", (req, res) => {
 
 
 // member dashboard post requests
+
+// Find events that user has not signed up for, return to client
+app.post("/find-events", (req, res) => {
+
+    // returns to client all rows whose userid is null, indicating no one has signed up for session
+    pool.query(
+      `SELECT * FROM schedules
+        WHERE userid IS NULL`,
+      [req.user.id]
+      ,
+      (err, results) => {
+        if (err) {
+          console.log(err);
+        }
+
+        // Puts corresponding session title, cost, times and num users back to client
+        const schedule = results.rows.map(user => ({
+          title: user.title,
+          cost: user.cost,
+          date: user.seshdate,
+          start: user.starttime,
+          seshid: user.scheduleid,
+          member: user.userid
+
+      
+        }));
+
+        // sends data back to client
+        res.json({ data: schedule });
+
+      }); 
+});
 
 // update user current daily steps and step goals
 app.post("/submit-steps-data", (req, res) => {

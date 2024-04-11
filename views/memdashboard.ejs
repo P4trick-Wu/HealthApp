@@ -25,6 +25,23 @@
     <h5>ID: <%= id %></h5>
     <h5>Usertype: Member</h5>
 
+    <!-- Schedule management card -->
+
+    <div class="card" style="width: 25rem">
+      <h5 class="card-header">Schedule management</h5>
+      <div class="card-body">
+        <p class="card-text">Search for classes/sessions</p>
+
+        <a href="#" class="btn btn-primary" id="findEvents">Search</a>
+      </div>
+      <div class="card-body">
+        <p class="card-text">Your classes/sessions:</p>
+
+        <!-- List of classes -->
+        <ul id="yourSchedule"></ul>
+      </div>
+    </div>
+
     <!-- Steps counter card -->
     <div class="card" style="width: 18rem">
       <div class="card-body">
