@@ -49,6 +49,7 @@ function getSchedule() {
                         <p>Date: ${date[0]}</p>
                         <p>Start time: ${session.start}</p>
                         <p>Registered member id: ${session.id }</p>
+                        <p>Room: ${session.room }</p>
                         <button onclick="deleteSession(this.id, event)" id="button:${session.seshid}" class="btn btn-danger">Delete session</button>
                     </form>
                 </div>
@@ -118,8 +119,11 @@ function updateSchedule () {
     const newEndTimeInput = document.getElementById('newEndTime').value;
     const newCostInput = document.getElementById('newCost').value;
 
+    const newRoomId = document.getElementById('chosenRoom').getAttribute("room-id");
+    const newCapacity = document.getElementById('newCapacity').value;
+
     // Check if any of the input fields are empty
-    if (!newTitleInput || !newDateTimeInput || !newEndTimeInput || !newCostInput) {
+    if (!newTitleInput || !newDateTimeInput || !newEndTimeInput || !newCostInput || !newRoomId || !newCapacity) {
 
         // Display error message to the user
         alert('Please fill in all fields before submitting.');
@@ -131,7 +135,9 @@ function updateSchedule () {
         newTitle: newTitleInput,
         newDateTime: newDateTimeInput,
         newEndTime: newEndTimeInput,
-        newCost: newCostInput
+        newCost: newCostInput,
+        newRoom: newRoomId,
+        newCapacity: newCapacity
     };
 
     console.log(data)
@@ -182,7 +188,7 @@ function searchMembers() {
         // console.log('Received data:', responseData.members[0]);
         const members = responseData.members;
 
-        console.log(members)
+        // console.log(members)
 
         // Clear the current list
         const membersList = document.getElementById("membersList");
@@ -201,4 +207,56 @@ function searchMembers() {
         // Something went wrong
         console.error('Error: ', error.message);
     });
+}
+
+function findRooms() {
+
+     // request availalbe rooms from server
+    fetch('/find-rooms', {
+        method: 'POST',
+         headers: {
+            'Content-Type': 'application/json' 
+        },
+    }).then(response => {
+        console.log('Response status: ', response.status);
+        return response.json();
+    }).then(responseData => { 
+        // Process the JSON data received from the server, and update webpage
+
+        const rooms = responseData.data;
+        
+        //clear current list
+        const roomsList = document.getElementById("availableRooms");
+        roomsList.innerHTML = "";
+
+        // Iterate over found rooms, making them clickable and selectable along with key info such as room name and capacity.
+        rooms.forEach(room => {
+            const li = document.createElement("li");
+
+            li.innerHTML += `
+               <a class="dropdown-item" href="#" onclick="selectRoom(this.id, this.innerHTML)" id="roomOption:${room.id}">${room.name}, Capacity: ${room.capacity}</a>
+            `;
+
+            roomsList.appendChild(li);
+        });
+
+
+    }).catch(error => {
+        // Something went wrong
+        console.error('Error: ', error.message);
+    });
+}
+
+// Prints the chosen room from dropdown onto modal
+function selectRoom(id, data) {
+    
+    const roomId = id.split(":")[1]
+
+    // sets attribute to room id so it can be passed back to server when creating new database entry
+    const info = document.getElementById("chosenRoom");
+    info.innerHTML = `Room chosen: ${data}`;
+    info.setAttribute("room-id", roomId);
+    
+
+
 }

@@ -32,12 +32,6 @@ function initialize(passport) {
             }
           }
 
-          // if(user.usertype === 'trainer') {
-          //   if (user.password == password) {
-          //     return done(null, user);
-          //   } 
-          // }
-
           // Compares encrypted password stored in data base with user entered password
           bcrypt.compare(password, user.password, (err, isMatch) => {
             if (err) {

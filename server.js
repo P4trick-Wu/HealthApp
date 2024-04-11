@@ -75,10 +75,9 @@ app.get("/trainerdashboard", checkNotAuthenticated, (req, res) => {
 
 
   let userList = [];
-  let trainerSessions = [];
   // Gets list of all users
   pool.query(
-      `SELECT * FROM users ORDER by name ASC`,
+      `SELECT * FROM users WHERE usertype = 'member' ORDER by name ASC`,
       (err, results) => {
         if (err) {
           console.log(err);
@@ -208,6 +207,34 @@ app.post(
 
 //trainer dashboard post requests
 
+
+// Returns availalbe rooms from the database
+app.post("/find-rooms", (req, res) => {
+
+    // Gets list of all availalbe rooms (maybe check for capacity and time conflicts or let admin do that lol)
+    pool.query(
+      `SELECT * FROM rooms
+        `,
+      (err, results) => {
+        if (err) {
+          console.log(err);
+        }
+
+        // Puts corresponding room info in rooms object
+        const rooms = results.rows.map(room => ({
+          id: room.roomid,
+          name: room.roomname,
+          capacity: room.capacity
+      
+        }));
+
+        // sends data back to client
+        res.json({ data: rooms });
+
+      }); 
+});
+
+// Returns trainer's own sessions
 app.post("/view-schedules", (req, res) => {
 
     // Gets list of all users with matching mame
@@ -228,7 +255,8 @@ app.post("/view-schedules", (req, res) => {
           date: user.seshdate,
           start: user.starttime,
           seshid: user.scheduleid,
-          member: user.userid
+          member: user.userid,
+          room: user.room
 
       
         }));
@@ -239,6 +267,7 @@ app.post("/view-schedules", (req, res) => {
       }); 
 });
 
+// Deletes trainer's schedule from database
 app.post("/delete-session", (req, res) => {
 
   const data = req.body;
@@ -266,6 +295,9 @@ app.post("/new-schedule-data", (req, res) => {
   const cost = req.body.newCost;
   const id = req.user.id
 
+  const roomId = req.body.newRoom;
+  const capacity = req.body.newCapacity;
+
   console.log(req.body)
 
   // parse datetime-local string into date and time compnents
@@ -288,13 +320,12 @@ app.post("/new-schedule-data", (req, res) => {
   const sqlStartTime = `${hours}:${minutes}`;
   const sqlEndTime = `${endHours}:${endMinutes}`;
 
-  // console.log("received data: ", title, sqlDate, sqlStartTime, sqlEndTime, cost, " from user ", id);
 
   // queries values into database, creating a new schedule 
   pool.query(
-    `INSERT INTO schedules (cost, seshdate, starttime, endtime, trainerid, title)
-        VALUES ($1, $2, $3, $4, $5, $6)`,
-    [cost, sqlDate, sqlStartTime, sqlEndTime, id, title ],
+    `INSERT INTO schedules (cost, seshdate, starttime, endtime, trainerid, title, room, capacity)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+    [cost, sqlDate, sqlStartTime, sqlEndTime, id, title, roomId, capacity ],
     (err, results) => {
       if (err) {
         res.status(404).send("Error uplodaing to database");
@@ -315,7 +346,7 @@ app.post("/find-members", (req, res) => {
     // Gets list of all users with matching mame
     pool.query(
       `SELECT * FROM users
-        WHERE name LIKE '%' || $1 || '%' ORDER by name ASC`,
+        WHERE name LIKE '%' || $1 || '%' AND usertype = 'member' ORDER by name ASC`,
       [name]
       ,
       (err, results) => {

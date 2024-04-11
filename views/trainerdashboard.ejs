@@ -100,6 +100,31 @@
                       min="0"
                     />
                   </div>
+                  <!-- session capacity -->
+                  <div class="mb-3">
+                    <label for="newCapacity" class="form-label">Capacity</label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="newCapacity"
+                      min="1"
+                    />
+                  </div>
+                  <!-- pick room -->
+                  <div class="dropdown">
+                    <button
+                      class="btn btn-secondary dropdown-toggle"
+                      type="button"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                      id="getRooms"
+                      onclick="findRooms()"
+                    >
+                      Select room below
+                    </button>
+                    <ul class="dropdown-menu" id="availableRooms"></ul>
+                  </div>
+                  <div id="chosenRoom"></div>
                 </form>
               </div>
               <div class="modal-footer">
