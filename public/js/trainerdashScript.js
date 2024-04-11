@@ -32,19 +32,29 @@ function getSchedule() {
 
             const date = session.date.split("T");
 
-            li.textContent = "Title: " + session.title + ", Cost: " + session.cost + ", Date: " + date[0] + ", Start time: " + session.start
-            + ", SessionID: " + session.seshid + ", Registered member id: " + session.id;
-
-            // Create new delete button and append to corresponding list element
-            // const but = document.createElement("button")
-            // but.textContent = "Delete session"
-            // but.className = "btn btn-danger"
-
-
-            // li.appendChild(but)
-
-            li.innerHTML += '<button onclick="deleteSession(this.id)" id="button:' + session.seshid + '" class="btn btn-danger">Delete session</button>'
-            li.id = session.seshid
+            // Append new drop down modal to list containing session details
+            li.innerHTML += `
+                <div class="dropdown">
+                    <button
+                        type="button"
+                        class="btn btn-success dropdown-toggle"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                        data-bs-auto-close="outside"
+                    >
+                        ${session.title}
+                    </button>
+                    <form class="dropdown-menu p-4">
+                        <p>Cost: ${session.cost }</p>
+                        <p>Date: ${date[0]}</p>
+                        <p>Start time: ${session.start}</p>
+                        <p>Registered member id: ${session.id }</p>
+                        <button onclick="deleteSession(this.id, event)" id="button:${session.seshid}" class="btn btn-danger">Delete session</button>
+                    </form>
+                </div>
+                <div style="padding-bottom: 10px;"></div>
+            `;
+            li.id = session.seshid;
 
             sessionslist.appendChild(li);
         });
@@ -57,13 +67,46 @@ function getSchedule() {
         console.error('Error: ', error.message);
     });
 
+
+
 }
 
 // Deleletes session from database
-function deleteSession(clickedId) {
+function deleteSession(clickedId, event) {
 
-    var listId = document.getElementById(clickedId).parentElement.id
-    console.log(listId)
+    // Prevent the default form submission behavior
+    event.preventDefault();
+
+    // gets id of the list item containing session to be deleted
+    let buttonData = document.getElementById(clickedId).id.split(":");
+    let listId = buttonData[1]
+
+    // Remove list item from client
+    const session = document.getElementById(listId);
+    session.innerHTML = "";
+
+    // Create an object with the data to send to the server
+    const data = {
+       id: listId
+    };
+
+    // send id to server to be deleted
+    fetch('/delete-session', {
+        method: 'POST',
+         headers: {
+            'Content-Type': 'application/json' 
+        },
+        // Convert the data to JSON format
+        body: JSON.stringify(data) 
+    }).then(response => {
+        console.log('Response status: ', response.status);
+    }).catch(error => {
+        // something went wrong
+        console.error('Error: ', error.message);
+    });
+
+    
+ 
 }
 
 // Uploads new trainer schedule to database

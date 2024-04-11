@@ -236,6 +236,24 @@ app.post("/view-schedules", (req, res) => {
       }); 
 });
 
+app.post("/delete-session", (req, res) => {
+
+  const data = req.body;
+
+  // Finds and deletes row in database with the same session id
+  pool.query(
+    `DELETE FROM schedules
+      WHERE scheduleid = $1`,
+    [data.id]
+    ,
+    (err, results) => {
+      if (err) {
+        console.log(err);
+      }
+
+    }); 
+});
+
 // upload new schedule into database 
 app.post("/new-schedule-data", (req, res) => {
 
