@@ -1,6 +1,7 @@
 const LocalStrategy = require("passport-local").Strategy;
 const { pool } = require("./dbConfig");
 const bcrypt = require("bcrypt");
+const crypto = require('crypto');
 
 function initialize(passport) {
   console.log("Initialized");
@@ -20,12 +21,22 @@ function initialize(passport) {
         if (results.rows.length > 0) {
           const user = results.rows[0];
 
-          //Checks if user is a trainer, bypass encryption if trainer password matches
-          if(user.usertype === 'trainer') {
-            if (user.password == password) {
+          //Checks if user is a trainer, turn string into sha256 and compare with database password
+
+          const hashedPass = hash(password);
+
+          if(user.usertype === 'trainer' || user.usertype === 'admin') {
+            console.log(hashedPass)
+            if(hashedPass == user.password) {
               return done(null, user);
-            } 
+            }
           }
+
+          // if(user.usertype === 'trainer') {
+          //   if (user.password == password) {
+          //     return done(null, user);
+          //   } 
+          // }
 
           // Compares encrypted password stored in data base with user entered password
           bcrypt.compare(password, user.password, (err, isMatch) => {
@@ -74,6 +85,11 @@ function initialize(passport) {
       return done(null, results.rows[0]);
     });
   });
+}
+
+// Use this function to compare and generate hashed passwords for admin and trainers
+function hash(input) {
+    return crypto.createHash('sha256').update(input).digest('hex');
 }
 
 module.exports = initialize;
