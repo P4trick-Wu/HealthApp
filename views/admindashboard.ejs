@@ -46,20 +46,8 @@
 
       <div class="card-body">
         <p class="card-text">Search for classes/sessions</p>
-        <!-- Dropdown button for finding sessios to delete -->
-        <!-- <div class="dropdown">
-          <button
-            class="btn btn-primary dropdown-toggle"
-            type="button"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-            id="findEvents"
-            onclick="findEvents()"
-          >
-            Search
-          </button>
-          <ul class="dropdown-menu" id="availableSessions"></ul>
-        </div> -->
+
+        <!-- Modal for sessions -->
         <a
           href="#"
           class="btn btn-primary"
@@ -132,6 +120,67 @@
                   id="newRoomButton"
                   data-bs-dismiss="modal"
                   onclick="createRoom()"
+                >
+                  Save changes
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Modal for updating class schedule -->
+        <div
+          class="modal fade"
+          id="updateClass"
+          tabindex="-1"
+          aria-labelledby="exampleModalLabel"
+          aria-hidden="true"
+        >
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <!-- Input fields for updating data -->
+              <div class="modal-body">
+                <form>
+                  <!-- session title -->
+                  <div class="mb-3">
+                    <label for="newTitle" class="form-label">Title</label>
+                    <input type="text" class="form-control" id="newTitle" />
+                  </div>
+                  <!-- date, start time input -->
+                  <div class="mb-3">
+                    <label for="newDateTime" class="form-label"
+                      >Input date and start time</label
+                    >
+                    <input
+                      type="datetime-local"
+                      class="form-control"
+                      id="newDateTime"
+                    />
+                  </div>
+                  <!-- end time -->
+                  <div class="mb-3">
+                    <label for="newEndTime" class="form-label"
+                      >Input end time</label
+                    >
+                    <input type="time" class="form-control" id="newEndTime" />
+                  </div>
+                  <div id="chosenRoom"></div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  Close
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  id="updateScheduleButton"
+                  data-bs-dismiss="modal"
+                  onclick="updateSchedule()"
                 >
                   Save changes
                 </button>

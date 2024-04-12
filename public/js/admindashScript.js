@@ -1,3 +1,6 @@
+// global button id that triggered modal
+var triggerModalId;
+
 // Creates a new room in the database
 function createRoom() {
 
@@ -33,6 +36,52 @@ function createRoom() {
     });
 }
 
+// updates schedule clicked on by admin
+function updateSchedule() {
+
+    const sessionId = triggerModalId;
+    
+    // Store data from input fields into varaibles
+    const newTitleInput = document.getElementById('newTitle').value;
+    const newDateTimeInput = document.getElementById('newDateTime').value;
+    const newEndTimeInput = document.getElementById('newEndTime').value;
+
+    // Check if any of the input fields are empty, makes sure all fields are filled out
+    if (!newTitleInput || !newDateTimeInput || !newEndTimeInput ) {
+        // Display error message to the user
+        alert('Please fill in all fields before submitting.');
+        return;
+    }
+
+    // Create object with data
+    const data = {
+        newTitle: newTitleInput,
+        newDateTime: newDateTimeInput,
+        newEndTime: newEndTimeInput,
+        sessionId: sessionId
+
+    };
+
+    console.log("Changing session " ,  sessionId, "with these values")
+    console.log(data)
+
+    // Send data object to server for processing
+    fetch('/new-schedule-data', {
+        method: 'POST',
+         headers: {
+            'Content-Type': 'application/json' 
+        },
+        // Convert the data to JSON format
+        body: JSON.stringify(data) 
+    }).then(response => {
+        console.log('Response status: ', response.status);
+    }).catch(error => {
+        // something went wrong
+        console.error('Error: ', error.message);
+    });
+
+}
+
 // gets list of all sessions
 function findEvents() {
      // Send data object to server for processing
@@ -60,12 +109,7 @@ function findEvents() {
 
             const date = session.date.split("T")[0]
 
-            // li.innerHTML += `
-            //    <a class="dropdown-item" href="#" onclick="deleteSession(this.id)" id="sessionid:${session.seshid}">Title: ${session.title} , 
-            //    Trainer: ${session.trainer} <br> Room: ${session.room}
-            //     <Date: ${date} <br> Start time: ${session.start} <br> Turnout: ${session.turnout} </a>
-            // `;
-
+            // Added info and delete button option for sessions. Add modification options beside
             li.innerHTML += ` 
             <div class="dropdown">
                     <button
@@ -83,6 +127,16 @@ function findEvents() {
                         <p>Start time: ${session.start}</p>
                         <p>Room: ${session.room }</p>
                         <p>Turnout: ${session.turnout}</p>
+                        <button
+                            type="button"
+                            id="modalButton:${session.seshid}"
+                            class="btn btn-primary"
+                            data-bs-toggle="modal"
+                            data-bs-target="#updateClass"
+                            onclick="setTrigger(this.id)"
+                            >
+                            Update session
+                        </button>
                         <button onclick="deleteSession(this.id, event)" id="button:${session.seshid}" class="btn btn-danger">Delete session</button>
                     </form>
                 </div>
@@ -98,6 +152,12 @@ function findEvents() {
         console.error('Error: ', error.message);
     });
 }
+
+// sets global varialbe to button clicked that brought up the modal
+function setTrigger(buttonId) {
+    triggerModalId = buttonId.split(":")[1];
+}
+
 
 // deletes session on client, sends id to be deleted from database
 function deleteSession(sessionId, event) {

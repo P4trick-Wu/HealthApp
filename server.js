@@ -292,6 +292,55 @@ app.post("/find-events-admin", (req, res) => {
       }); 
 });
 
+// Updates session with given data
+app.post("/new-schedule-data", (req, res) => {
+
+  const title = req.body.newTitle;
+  const dateTime = req.body.newDateTime;
+  const endTime = req.body.newEndTime;
+
+  // console.log(req.body)
+
+  // parse datetime-local string into date and time compnents
+  const datetime = new Date(dateTime);
+
+  // Date components
+  const year = datetime.getFullYear();
+  const month = datetime.getMonth() + 1; 
+  const day = datetime.getDate();
+
+  // time components
+  const hours = datetime.getHours();
+  const minutes = datetime.getMinutes();
+
+  // time for end time
+  const [endHours, endMinutes] = endTime.split(":");
+
+  // construct AQL date and time
+  const sqlDate = `${year}-${month}-${day}`;
+  const sqlStartTime = `${hours}:${minutes}`;
+  const sqlEndTime = `${endHours}:${endMinutes}`;
+
+
+  // queries values into database, creating a new schedule 
+  pool.query(
+    `UPDATE schedules
+    SET title = $1, seshdate = $2, starttime = $3, endtime = $4
+    WHERE scheduleid = $5`,
+    [title, sqlDate, sqlStartTime, sqlEndTime, req.body.sessionId],
+    (err, results) => {
+      if (err) {
+        res.status(404).send("Error uplodaing to database");
+        throw err;
+      }
+        //Send response back to client
+        res.status(200).send("Data received successfully");
+    }
+  );
+
+});
+
+
 
 //trainer dashboard post requests
 
