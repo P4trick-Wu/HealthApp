@@ -239,6 +239,59 @@ app.post("/create-new-room", (req, res) => {
       }); 
 });
 
+// deletes room from database in rooms table
+app.post("/delete-room", (req, res) => {
+
+    const data = req.body;
+    
+    // deletes room from room table based on roomId passed in from client
+    pool.query(
+      `DELETE FROM rooms WHERE roomid = $1
+        `, [data.roomId],
+      (err, results) => {
+        if (err) {
+          console.log(err);
+        }
+
+      }); 
+});
+
+// Returns all sessions to admin
+app.post("/find-events-admin", (req, res) => {
+
+    // Finds all schedule sessions, adding a new column of the names of trainers who created the session based on their trainerid
+    pool.query(
+      `SELECT users.name AS name, schedules.*
+        FROM schedules
+        INNER JOIN users ON schedules.trainerid = users.id;
+    `,
+      (err, results) => {
+        if (err) {
+          console.log(err);
+        }
+
+        // console.log(results.rows)
+
+        // Puts corresponding session title, cost, times and num users back to client
+        const schedule = results.rows.map(session => ({
+          title: session.title,
+          // cost: session.cost,
+          date: session.seshdate,
+          start: session.starttime,
+          seshid: session.scheduleid,
+          room: session.room,
+          turnout: session.turnout,
+          capacity: session.capacity,
+          trainer: session.name
+      
+        }));
+
+        // sends data back to client
+        res.json({ data: schedule });
+
+      }); 
+});
+
 
 //trainer dashboard post requests
 
@@ -598,6 +651,8 @@ function checkAuthenticated(req, res, next) {
     // check user type, redirect to correct dash if already logged in on client
     if(req.user.usertype == 'member') {
       return res.redirect("/memdashboard");
+    } else if (req.user.usertype === 'admin') {
+      return res.redirect("/admindashboard")
     } else {
       return res.redirect("/trainerdashboard");
     }
