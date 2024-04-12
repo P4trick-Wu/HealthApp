@@ -32,7 +32,21 @@
       <div class="card-body">
         <p class="card-text">Search for classes/sessions</p>
 
-        <a href="#" class="btn btn-primary" id="findEvents">Search</a>
+        <!-- <a href="#" class="btn btn-primary" id="findEvents">Search</a> -->
+
+        <!-- Dropdown button for finding sessions -->
+        <div class="dropdown">
+          <button
+            class="btn btn-primary dropdown-toggle"
+            type="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+            id="findEvents"
+          >
+            Search
+          </button>
+          <ul class="dropdown-menu" id="availableSessions"></ul>
+        </div>
       </div>
       <div class="card-body">
         <p class="card-text">Your classes/sessions:</p>

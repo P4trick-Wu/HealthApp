@@ -20,14 +20,79 @@ function findEvents() {
     }).then(responseData => { 
         // Process the JSON data received from the server, and update webpage
         
-        const events = responseData.data;
-        console.log(events)
+        const sessions = responseData.data;
+       
+        //clear current list
+        const sessionsList = document.getElementById("availableSessions");
+        sessionsList.innerHTML = "";
+
+        // Iterate over found rooms, making them clickable and selectable along with key info such as room name and capacity.
+        sessions.forEach(session => {
+            const li = document.createElement("li");
+
+            const date = session.date.split("T")[0]
+
+            li.innerHTML += `
+               <a class="dropdown-item" href="#" onclick="signUp(this.id)" id="sessionid:${session.seshid}">Title: ${session.title} ,
+               Cost: ${session.cost} <br> Date: ${date} <br> Start time: ${session.start} <br> Turnout: ${session.turnout} </a>
+            `;
+
+            sessionsList.appendChild(li);
+        });
 
 
     }).catch(error => {
         // Something went wrong
         console.error('Error: ', error.message);
     });
+}
+
+// Signs the user up for the session based on the option they clicked, then removes option from the list of available sessions
+function signUp(scheduleId) {
+
+    const data = {
+        scheduleId: scheduleId.split(":")[1]
+    };
+
+    // Send data object to server for processing
+    fetch('/sign-up', {
+        method: 'POST',
+         headers: {
+            'Content-Type': 'application/json' 
+        },
+        body: JSON.stringify(data)
+    }).then(response => {
+        console.log('Response status: ', response.status);
+        return response.json();
+    }).then(responseData => { 
+        // Process the JSON data received from the server, and update webpage
+        
+        // const sessions = responseData.data;
+       
+        // //clear current list
+        // const sessionsList = document.getElementById("availableSessions");
+        // sessionsList.innerHTML = "";
+
+        // // Iterate over found rooms, making them clickable and selectable along with key info such as room name and capacity.
+        // sessions.forEach(session => {
+        //     const li = document.createElement("li");
+
+        //     const date = session.date.split("T")[0]
+
+        //     li.innerHTML += `
+        //        <a class="dropdown-item" href="#" onclick="signUp(this.id)" id="sessionid:${session.seshid}">Title: ${session.title} ,
+        //        Cost: ${session.cost} <br> Date: ${date} <br> Start time: ${session.start} </a>
+        //     `;
+
+        //     sessionsList.appendChild(li);
+        // });
+
+
+    }).catch(error => {
+        // Something went wrong
+        console.error('Error: ', error.message);
+    });
+
 }
 
 

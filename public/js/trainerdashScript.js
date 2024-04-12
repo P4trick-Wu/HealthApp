@@ -48,8 +48,8 @@ function getSchedule() {
                         <p>Cost: ${session.cost }</p>
                         <p>Date: ${date[0]}</p>
                         <p>Start time: ${session.start}</p>
-                        <p>Registered member id: ${session.id }</p>
                         <p>Room: ${session.room }</p>
+                        <p>Turnout: ${session.turnout}</p>
                         <button onclick="deleteSession(this.id, event)" id="button:${session.seshid}" class="btn btn-danger">Delete session</button>
                     </form>
                 </div>

@@ -255,8 +255,8 @@ app.post("/view-schedules", (req, res) => {
           date: user.seshdate,
           start: user.starttime,
           seshid: user.scheduleid,
-          member: user.userid,
-          room: user.room
+          room: user.room,
+          turnout: user.turnout
 
       
         }));
@@ -272,9 +272,9 @@ app.post("/delete-session", (req, res) => {
 
   const data = req.body;
 
-  // Finds and deletes row in database with the same session id
+  // Deletes rows in signup table with sessionid
   pool.query(
-    `DELETE FROM schedules
+    `DELETE FROM signup
       WHERE scheduleid = $1`,
     [data.id]
     ,
@@ -282,6 +282,21 @@ app.post("/delete-session", (req, res) => {
       if (err) {
         console.log(err);
       }
+
+      // Finds and deletes row in schedules table with the same session id
+      pool.query(
+        `DELETE FROM schedules
+          WHERE scheduleid = $1`,
+        [data.id]
+        ,
+        (err, results) => {
+          if (err) {
+            console.log(err);
+          }
+
+          
+
+        }); 
 
     }); 
 });
@@ -372,29 +387,64 @@ app.post("/find-members", (req, res) => {
 
 // member dashboard post requests
 
+// Signs user up for session, increments schedule turnout by 1
+app.post("/sign-up", (req, res) => {
+
+  const userId = req.user.id;
+  console.log(userId)
+
+    // insert schedule id and user id into signup table, then increment turnout in schedules
+    pool.query(
+      `INSERT INTO signup (scheduleid, userid)
+       VALUES ($1, $2)`,
+      [req.body.scheduleId, userId]
+       ,
+      (err, results) => {
+        if (err) {
+          console.log(err);
+        }
+
+        // Increment turnout in shcedules for schedule id
+        pool.query(
+          `UPDATE schedules SET turnout = turnout + 1 WHERE scheduleid = $1
+            `,
+          [req.body.scheduleId]
+          ,
+          (err, results) => {
+            if (err) {
+              console.log(err);
+            }
+
+          }); 
+
+
+      }); 
+});
+
 // Find events that user has not signed up for, return to client
 app.post("/find-events", (req, res) => {
 
-    // returns to client all rows whose userid is null, indicating no one has signed up for session
+    // Finds schedules where capacity > turnout and userid != scheduleid in signup, finding schedules user has not signed up for
     pool.query(
-      `SELECT * FROM schedules
-        WHERE userid IS NULL`,
-      [req.user.id]
-      ,
+      `SELECT s.*
+        FROM schedules s
+        LEFT JOIN signup su ON s.scheduleid = su.scheduleid AND su.userid = $1
+        WHERE s.capacity > s.turnout AND su.userid IS NULL`,
+        [req.user.id],
       (err, results) => {
         if (err) {
           console.log(err);
         }
 
         // Puts corresponding session title, cost, times and num users back to client
-        const schedule = results.rows.map(user => ({
-          title: user.title,
-          cost: user.cost,
-          date: user.seshdate,
-          start: user.starttime,
-          seshid: user.scheduleid,
-          member: user.userid
-
+        const schedule = results.rows.map(session => ({
+          title: session.title,
+          cost: session.cost,
+          date: session.seshdate,
+          start: session.starttime,
+          seshid: session.scheduleid,
+          room: session.room,
+          turnout: session.turnout
       
         }));
 
