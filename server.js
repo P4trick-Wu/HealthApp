@@ -282,7 +282,6 @@ app.post("/delete-session", (req, res) => {
       if (err) {
         console.log(err);
       }
-
       // Finds and deletes row in schedules table with the same session id
       pool.query(
         `DELETE FROM schedules
@@ -292,12 +291,8 @@ app.post("/delete-session", (req, res) => {
         (err, results) => {
           if (err) {
             console.log(err);
-          }
-
-          
-
+          }       
         }); 
-
     }); 
 });
 
@@ -387,6 +382,35 @@ app.post("/find-members", (req, res) => {
 
 // member dashboard post requests
 
+// Deletes user signed up session from signup table, decrement corresponding schedule turnout by one
+app.post("/delete-user-event", (req, res) => {
+
+  const data = req.body;
+
+  // Deletes row in signup table with sessionid and userid that user signed up for
+  pool.query(
+    `DELETE FROM signup
+      WHERE scheduleid = $1 AND userid = $2`,
+    [data.id, req.user.id]
+    ,
+    (err, results) => {
+      if (err) {
+        console.log(err);
+      }
+      // decrements turnout in schedules
+      pool.query(
+        `UPDATE schedules SET turnout = turnout - 1
+          WHERE scheduleid = $1`,
+        [data.id]
+        ,
+        (err, results) => {
+          if (err) {
+            console.log(err);
+          }       
+        }); 
+    }); 
+});
+
 // Signs user up for session, increments schedule turnout by 1
 app.post("/sign-up", (req, res) => {
 
@@ -417,6 +441,39 @@ app.post("/sign-up", (req, res) => {
 
           }); 
 
+
+      }); 
+});
+
+// Find events the user has signed up for
+app.post("/find-your-events", (req, res) => {
+
+    // Finds schedules where capacity > turnout and userid != scheduleid in signup, finding schedules user has not signed up for
+    pool.query(
+      `SELECT s.*
+        FROM schedules s
+        LEFT JOIN signup su ON s.scheduleid = su.scheduleid 
+        WHERE s.capacity > s.turnout AND su.userid = $1`,
+        [req.user.id],
+      (err, results) => {
+        if (err) {
+          console.log(err);
+        }
+
+        // Puts corresponding session title, cost, times and num users back to client
+        const schedule = results.rows.map(session => ({
+          title: session.title,
+          cost: session.cost,
+          date: session.seshdate,
+          start: session.starttime,
+          seshid: session.scheduleid,
+          room: session.room,
+          turnout: session.turnout
+      
+        }));
+
+        // sends data back to client
+        res.json({ data: schedule });
 
       }); 
 });

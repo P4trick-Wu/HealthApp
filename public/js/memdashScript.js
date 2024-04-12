@@ -2,7 +2,104 @@
 document.getElementById("stepsUpdateButton").addEventListener("click", updateSteps);
 // listener for finding classes that user has not signed up for yet
 document.getElementById("findEvents").addEventListener("click", findEvents);
+// Listener for finding your classes
+document.getElementById("getMemberSchedules").addEventListener("click", findYourEvents);
 
+
+// retrieves events that the user has signed up for, dispalying them
+function findYourEvents() {
+
+    fetch('/find-your-events', {
+        method: 'POST',
+         headers: {
+            'Content-Type': 'application/json' 
+        },
+        // body: JSON.stringify(data)
+    }).then(response => {
+        console.log('Response status: ', response.status);
+        return response.json();
+    }).then(responseData => { 
+        // Process the JSON data received from the server, and update webpage
+
+        const sessions = responseData.data;
+
+        // Clear the current list
+        const sessionslist = document.getElementById("yourSchedule");
+        sessionslist.innerHTML = "";
+
+        // Iterate over the updated list of members and append them to the list
+        sessions.forEach(session => {
+            const li = document.createElement("li");
+
+            const date = session.date.split("T");
+
+            // Append new drop down modal to list containing session details
+            li.innerHTML += `
+                <div style="padding-bottom: 10px;"></div>
+                <div class="dropdown">
+                    <button
+                        type="button"
+                        class="btn btn-success dropdown-toggle"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                        data-bs-auto-close="outside"
+                    >
+                        ${session.title}
+                    </button>
+                    <form class="dropdown-menu p-4">
+                        <p>Cost: ${session.cost }</p>
+                        <p>Date: ${date[0]}</p>
+                        <p>Start time: ${session.start}</p>
+                        <p>Room: ${session.room }</p>
+                        <p>Turnout: ${session.turnout}</p>
+                        <button onclick="deleteUserEvent(this.id, event)" id="button:${session.seshid}" class="btn btn-danger">Delete session</button>
+                    </form>
+                </div>
+                
+            `;
+            li.id = session.seshid;
+
+            sessionslist.appendChild(li);
+        });
+
+
+    }).catch(error => {
+        // Something went wrong
+        console.error('Error: ', error.message);
+    });
+}
+
+function deleteUserEvent(sessionId, event) {
+
+    // Prevent the default form submission behavior, preventing page from restarting
+    event.preventDefault();
+    const id = sessionId.split(":")[1]
+
+    // Remove list item from client
+    const session = document.getElementById(id);
+    session.innerHTML = "";
+
+    // Create an object with the data to send to the server
+    const data = {
+       id: id
+    };
+
+    // Send schedule id to server to be deleted from signup table, and schedule turnout to be decremented
+    fetch('/delete-user-event', {
+        method: 'POST',
+         headers: {
+            'Content-Type': 'application/json' 
+        },
+        // Convert the data to JSON format
+        body: JSON.stringify(data) 
+    }).then(response => {
+        console.log('Response status: ', response.status);
+    }).catch(error => {
+        // something went wrong
+        console.error('Error: ', error.message);
+    });
+
+}
 
 // Retrieves all classes not signed up for by user, displaying them on dashboard
 function findEvents() {
@@ -66,27 +163,6 @@ function signUp(scheduleId) {
         return response.json();
     }).then(responseData => { 
         // Process the JSON data received from the server, and update webpage
-        
-        // const sessions = responseData.data;
-       
-        // //clear current list
-        // const sessionsList = document.getElementById("availableSessions");
-        // sessionsList.innerHTML = "";
-
-        // // Iterate over found rooms, making them clickable and selectable along with key info such as room name and capacity.
-        // sessions.forEach(session => {
-        //     const li = document.createElement("li");
-
-        //     const date = session.date.split("T")[0]
-
-        //     li.innerHTML += `
-        //        <a class="dropdown-item" href="#" onclick="signUp(this.id)" id="sessionid:${session.seshid}">Title: ${session.title} ,
-        //        Cost: ${session.cost} <br> Date: ${date} <br> Start time: ${session.start} </a>
-        //     `;
-
-        //     sessionsList.appendChild(li);
-        // });
-
 
     }).catch(error => {
         // Something went wrong

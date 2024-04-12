@@ -106,7 +106,6 @@ function deleteSession(clickedId, event) {
         console.error('Error: ', error.message);
     });
 
-    
  
 }
 
