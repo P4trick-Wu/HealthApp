@@ -60,12 +60,35 @@ function findEvents() {
 
             const date = session.date.split("T")[0]
 
-            li.innerHTML += `
-               <a class="dropdown-item" href="#" onclick="deleteSession(this.id)" id="sessionid:${session.seshid}">Title: ${session.title} , 
-               Trainer: ${session.trainer} <br> Room: ${session.room}
-                <Date: ${date} <br> Start time: ${session.start} <br> Turnout: ${session.turnout} </a>
-            `;
+            // li.innerHTML += `
+            //    <a class="dropdown-item" href="#" onclick="deleteSession(this.id)" id="sessionid:${session.seshid}">Title: ${session.title} , 
+            //    Trainer: ${session.trainer} <br> Room: ${session.room}
+            //     <Date: ${date} <br> Start time: ${session.start} <br> Turnout: ${session.turnout} </a>
+            // `;
 
+            li.innerHTML += ` 
+            <div class="dropdown">
+                    <button
+                        type="button"
+                        class="btn btn-success dropdown-toggle"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                        data-bs-auto-close="outside"
+                    >
+                        ${session.title}
+                    </button>
+                    <form class="dropdown-menu p-4">
+                        <p>Date: ${date}</p>
+                        <p>Trainer: ${session.trainer}</p>
+                        <p>Start time: ${session.start}</p>
+                        <p>Room: ${session.room }</p>
+                        <p>Turnout: ${session.turnout}</p>
+                        <button onclick="deleteSession(this.id, event)" id="button:${session.seshid}" class="btn btn-danger">Delete session</button>
+                    </form>
+                </div>
+                <div style="padding-bottom: 10px;"></div>
+            `;
+            li.id = session.seshid;
             sessionsList.appendChild(li);
         });
 
@@ -77,10 +100,13 @@ function findEvents() {
 }
 
 // deletes session on client, sends id to be deleted from database
-function deleteSession(sessionId) {
+function deleteSession(sessionId, event) {
+
+    // Prevent the default form submission behavior
+    event.preventDefault();
 
     // Deletes item from client
-    const listItem = document.getElementById(sessionId);
+    const listItem = document.getElementById(sessionId.split(":")[1]);
     listItem.innerHTML = ""
     
     const data = {

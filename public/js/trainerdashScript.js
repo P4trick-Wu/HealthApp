@@ -118,6 +118,7 @@ function updateSchedule () {
     // const newCostInput = document.getElementById('newCost').value;
 
     const newRoomId = document.getElementById('chosenRoom').getAttribute("room-id");
+
     const newCapacity = document.getElementById('newCapacity').value;
 
     // Check if any of the input fields are empty, makes sure all fields are filled out
@@ -232,7 +233,7 @@ function findRooms() {
             const li = document.createElement("li");
 
             li.innerHTML += `
-               <a class="dropdown-item" href="#" onclick="selectRoom(this.id, this.innerHTML)" id="roomOption:${room.id}">${room.name}, Capacity: ${room.capacity}</a>
+               <a class="dropdown-item" href="#" onclick="selectRoom(this.id, this.innerHTML)" id="roomOption:${room.name}">${room.name}, Capacity: ${room.capacity}</a>
             `;
 
             roomsList.appendChild(li);

@@ -45,9 +45,9 @@
       <ul id="roomsList" style="list-style-type: none"></ul>
 
       <div class="card-body">
-        <p class="card-text">Search for classes/sessions to delete</p>
+        <p class="card-text">Search for classes/sessions</p>
         <!-- Dropdown button for finding sessios to delete -->
-        <div class="dropdown">
+        <!-- <div class="dropdown">
           <button
             class="btn btn-primary dropdown-toggle"
             type="button"
@@ -59,8 +59,18 @@
             Search
           </button>
           <ul class="dropdown-menu" id="availableSessions"></ul>
-        </div>
+        </div> -->
+        <a
+          href="#"
+          class="btn btn-primary"
+          onclick="findEvents()"
+          id="findEvents"
+          >Search</a
+        >
       </div>
+
+      <!-- list of sessions -->
+      <ul style="list-style-type: none" id="availableSessions"></ul>
 
       <div class="card-body">
         <h6 class="card-subtitle mb-2 text-body-secondary">
