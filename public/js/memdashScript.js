@@ -133,7 +133,7 @@ function findEvents() {
 
             li.innerHTML += `
                <a class="dropdown-item" href="#" onclick="signUp(this.id)" id="sessionid:${session.seshid}">Title: ${session.title} ,
-               Cost: ${session.cost} <br> Date: ${date} <br> Start time: ${session.start} <br> Turnout: ${session.turnout} </a>
+                <Date: ${date} <br> Start time: ${session.start} <br> Turnout: ${session.turnout} </a>
             `;
 
             sessionsList.appendChild(li);

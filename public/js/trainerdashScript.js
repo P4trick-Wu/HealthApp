@@ -45,7 +45,6 @@ function getSchedule() {
                         ${session.title}
                     </button>
                     <form class="dropdown-menu p-4">
-                        <p>Cost: ${session.cost }</p>
                         <p>Date: ${date[0]}</p>
                         <p>Start time: ${session.start}</p>
                         <p>Room: ${session.room }</p>
@@ -116,13 +115,13 @@ function updateSchedule () {
     const newTitleInput = document.getElementById('newTitle').value;
     const newDateTimeInput = document.getElementById('newDateTime').value;
     const newEndTimeInput = document.getElementById('newEndTime').value;
-    const newCostInput = document.getElementById('newCost').value;
+    // const newCostInput = document.getElementById('newCost').value;
 
     const newRoomId = document.getElementById('chosenRoom').getAttribute("room-id");
     const newCapacity = document.getElementById('newCapacity').value;
 
     // Check if any of the input fields are empty
-    if (!newTitleInput || !newDateTimeInput || !newEndTimeInput || !newCostInput || !newRoomId || !newCapacity) {
+    if (!newTitleInput || !newDateTimeInput || !newEndTimeInput || !newRoomId || !newCapacity) {
 
         // Display error message to the user
         alert('Please fill in all fields before submitting.');
@@ -134,7 +133,7 @@ function updateSchedule () {
         newTitle: newTitleInput,
         newDateTime: newDateTimeInput,
         newEndTime: newEndTimeInput,
-        newCost: newCostInput,
+        // newCost: newCostInput,
         newRoom: newRoomId,
         newCapacity: newCapacity
     };

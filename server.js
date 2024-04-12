@@ -251,7 +251,7 @@ app.post("/view-schedules", (req, res) => {
         // Puts corresponding session title, cost, times and num users back to client
         const schedule = results.rows.map(user => ({
           title: user.title,
-          cost: user.cost,
+          // cost: user.cost,
           date: user.seshdate,
           start: user.starttime,
           seshid: user.scheduleid,
@@ -302,7 +302,7 @@ app.post("/new-schedule-data", (req, res) => {
   const title = req.body.newTitle;
   const dateTime = req.body.newDateTime;
   const endTime = req.body.newEndTime;
-  const cost = req.body.newCost;
+  // const cost = req.body.newCost;
   const id = req.user.id
 
   const roomId = req.body.newRoom;
@@ -333,9 +333,9 @@ app.post("/new-schedule-data", (req, res) => {
 
   // queries values into database, creating a new schedule 
   pool.query(
-    `INSERT INTO schedules (cost, seshdate, starttime, endtime, trainerid, title, room, capacity)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
-    [cost, sqlDate, sqlStartTime, sqlEndTime, id, title, roomId, capacity ],
+    `INSERT INTO schedules (seshdate, starttime, endtime, trainerid, title, room, capacity)
+        VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+    [sqlDate, sqlStartTime, sqlEndTime, id, title, roomId, capacity ],
     (err, results) => {
       if (err) {
         res.status(404).send("Error uplodaing to database");
@@ -460,10 +460,10 @@ app.post("/find-your-events", (req, res) => {
           console.log(err);
         }
 
-        // Puts corresponding session title, cost, times and num users back to client
+        // Puts corresponding session title, times and num users back to client
         const schedule = results.rows.map(session => ({
           title: session.title,
-          cost: session.cost,
+          // cost: session.cost,
           date: session.seshdate,
           start: session.starttime,
           seshid: session.scheduleid,
@@ -496,7 +496,7 @@ app.post("/find-events", (req, res) => {
         // Puts corresponding session title, cost, times and num users back to client
         const schedule = results.rows.map(session => ({
           title: session.title,
-          cost: session.cost,
+          // cost: session.cost,
           date: session.seshdate,
           start: session.starttime,
           seshid: session.scheduleid,
