@@ -120,7 +120,7 @@ function updateSchedule () {
     const newRoomId = document.getElementById('chosenRoom').getAttribute("room-id");
     const newCapacity = document.getElementById('newCapacity').value;
 
-    // Check if any of the input fields are empty
+    // Check if any of the input fields are empty, makes sure all fields are filled out
     if (!newTitleInput || !newDateTimeInput || !newEndTimeInput || !newRoomId || !newCapacity) {
 
         // Display error message to the user

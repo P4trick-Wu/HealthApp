@@ -70,6 +70,19 @@ app.get("/memdashboard", checkNotAuthenticated, (req, res) => {
   
 });
 
+app.get("/admindashboard", checkNotAuthenticated, (req, res) => {
+  console.log(req.isAuthenticated());
+
+  //gets a list of your classes
+
+  // Sends id, user's name, saved stepcount and stepgoal to client memdashboard page
+  res.render("admindashboard", 
+  { user: req.user.name,
+    id: req.user.id
+  });
+  
+});
+
 app.get("/trainerdashboard", checkNotAuthenticated, (req, res) => {
   console.log(req.isAuthenticated());
 
@@ -92,8 +105,8 @@ app.get("/trainerdashboard", checkNotAuthenticated, (req, res) => {
          // Sends data to trainerdashboard page
         res.render("trainerdashboard", 
           { user: req.user.name,
-            stepcount: req.user.stepcount,
-            stepgoal: req.user.stepgoal,
+            // stepcount: req.user.stepcount,
+            // stepgoal: req.user.stepgoal,
             id: req.user.id,
 
             // Send list of members to dashboard
@@ -194,19 +207,40 @@ app.post(
     failureRedirect: "/login",
     failureFlash: true
   }),
-  // Directs member to member dash and trainer to trainer dash
+  
   (req, res) => {
-
+    // Directs members to appropriate dashboard
     if (req.user.usertype === 'trainer') {
       res.redirect("/trainerdashboard");
+    } else if (req.user.usertype === 'admin'){
+      res.redirect("/admindashboard")
     } else {
       res.redirect("/memdashboard");
     }
   }
 );
 
-//trainer dashboard post requests
+// Admin dashboard post requests
 
+// Inserts new room into database in rooms table
+app.post("/create-new-room", (req, res) => {
+
+    const data = req.body;
+    
+    // Inserts name and capacity into rooms table
+    pool.query(
+      `INSERT INTO rooms (roomname, capacity) VALUES ($1, $2)
+        `, [data.name, data.capacity],
+      (err, results) => {
+        if (err) {
+          console.log(err);
+        }
+
+      }); 
+});
+
+
+//trainer dashboard post requests
 
 // Returns availalbe rooms from the database
 app.post("/find-rooms", (req, res) => {
