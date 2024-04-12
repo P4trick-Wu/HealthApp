@@ -27,13 +27,13 @@ function findYourEvents() {
         const sessionslist = document.getElementById("yourSchedule");
         sessionslist.innerHTML = "";
 
-        // Iterate over the updated list of members and append them to the list
+        // iterate over list of events signed up by the user
         sessions.forEach(session => {
             const li = document.createElement("li");
 
             const date = session.date.split("T");
 
-            // Append new drop down modal to list containing session details
+            // Append new drop down modal to list containing session details with delete button option
             li.innerHTML += `
                 <div style="padding-bottom: 10px;"></div>
                 <div class="dropdown">
@@ -57,6 +57,7 @@ function findYourEvents() {
                 </div>
                 
             `;
+            // Saves session id in element to be retrieved for other functions
             li.id = session.seshid;
 
             sessionslist.appendChild(li);
@@ -69,6 +70,7 @@ function findYourEvents() {
     });
 }
 
+// Remove user from an event they signed up for from client and database by sending request to server
 function deleteUserEvent(sessionId, event) {
 
     // Prevent the default form submission behavior, preventing page from restarting

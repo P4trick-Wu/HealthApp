@@ -397,7 +397,7 @@ app.post("/delete-user-event", (req, res) => {
       if (err) {
         console.log(err);
       }
-      // decrements turnout in schedules
+      // decrements turnout in corresponding schedule in schedules table
       pool.query(
         `UPDATE schedules SET turnout = turnout - 1
           WHERE scheduleid = $1`,
@@ -448,7 +448,7 @@ app.post("/sign-up", (req, res) => {
 // Find events the user has signed up for
 app.post("/find-your-events", (req, res) => {
 
-    // Finds schedules where capacity > turnout and userid != scheduleid in signup, finding schedules user has not signed up for
+    // Finds schedules where capacity > turnout and userid = scheduleid in signup, finding schedules user has signed up for
     pool.query(
       `SELECT s.*
         FROM schedules s
