@@ -200,26 +200,30 @@ function updateSteps() {
     console.log("update steps called");
 
     // Get the values from the input fields
-    const stepCount = document.getElementById("updateStepCount").value;
-    const stepGoal = document.getElementById("updateStepGoal").value;
+    let stepCount = document.getElementById("updateStepCount").value;
+    let stepGoal = document.getElementById("updateStepGoal").value;
 
+    if (stepCount > 0) {
+        document.getElementById('stepCountText').innerHTML = stepCount;
+    } else {
+        stepCount = document.getElementById('stepCountText').innerHTML
+    }
+    if(stepGoal > 0) {
+        document.getElementById('stepGoalText').innerHTML = stepGoal;
+    } else {
+        stepGoal = document.getElementById('stepGoalText').innerHTML
+    }
+
+    // updates progressbar
+    const bar = document.getElementById('stepsProgress');
+    bar.setAttribute("style", "width: " + stepCount / stepGoal * 100 + "%")
 
     // Create an object with the data to send to the server
     const data = {
         stepCount: stepCount,
         stepGoal: stepGoal
     };
-    // console.log(data);
-
-    // Update steps data on webpage
-    if (stepCount > 0) {
-        document.getElementById('stepCountText').innerHTML = stepCount;
-    }
-    if(stepGoal > 0) {
-        document.getElementById('stepGoalText').innerHTML = stepGoal;
-    }
-
-
+    console.log(data);
 
     // send post request updating steps data to database
     fetch('/submit-steps-data', {

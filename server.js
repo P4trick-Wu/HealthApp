@@ -85,7 +85,8 @@ app.get("/memdashboard", checkNotAuthenticated, (req, res) => {
           stepcount: data[0].stepcount,
           stepgoal: data[0].stepgoal,
           id: req.user.id,
-          paid: data[0].paidfor 
+          paid: data[0].paidfor,
+          style: `width: ${data[0].stepcount / data[0].stepgoal * 100}%`
         });
  
   });
@@ -865,7 +866,7 @@ app.post("/submit-steps-data", (req, res) => {
   if(stepGoal.length > 0) {
     
     pool.query(
-      `UPDATE users
+      `UPDATE stats
       SET stepgoal = $1
       WHERE email = $2`,
       [stepGoal, req.user.email],
