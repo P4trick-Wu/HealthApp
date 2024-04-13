@@ -149,6 +149,9 @@ function findEvents() {
 // Signs the user up for the session based on the option they clicked, then removes option from the list of available sessions
 function signUp(scheduleId) {
 
+    const obj = document.getElementById('fee');
+    obj.textContent = "Fees paid: false"
+
     const data = {
         scheduleId: scheduleId.split(":")[1]
     };
@@ -173,6 +176,24 @@ function signUp(scheduleId) {
 
 }
 
+// Pays fees for user
+function payFees() {
+
+    const obj = document.getElementById('fee');
+    obj.textContent = "Fees paid: true"
+    // send post request updating steps data to database
+    fetch('/pay-fees', {
+        method: 'POST',
+         headers: {
+            'Content-Type': 'application/json' 
+        }, 
+    }).then(response => {
+        console.log('Response status: ', response.status);
+    }).catch(error => {
+        // something went wrong
+        console.error('Error: ', error.message);
+    });
+}
 
 // Updates user step data
 function updateSteps() {

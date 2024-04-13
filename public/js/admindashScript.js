@@ -290,7 +290,7 @@ function updateSchedule() {
     console.log(data)
 
     // Send data object to server for processing
-    fetch('/new-schedule-data', {
+    fetch('/new-schedule-data-admin', {
         method: 'POST',
          headers: {
             'Content-Type': 'application/json' 

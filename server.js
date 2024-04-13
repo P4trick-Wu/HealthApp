@@ -60,14 +60,36 @@ app.get("/memdashboard", checkNotAuthenticated, (req, res) => {
 
   //gets a list of your classes
 
-  // Sends id, user's name, saved stepcount and stepgoal to client memdashboard page
-  res.render("memdashboard", 
-  { user: req.user.name,
-    stepcount: req.user.stepcount,
-    stepgoal: req.user.stepgoal,
-    id: req.user.id
+   pool.query(
+      `SELECT users.*, stats.*
+        FROM users
+        JOIN stats ON users.email = stats.email
+        WHERE users.id = $1`, [req.user.id],
+      (err, results) => {
+        if (err) {
+          console.log(err);
+        }
+
+        // Puts corresponding name and email of members from results into a list
+        const data = results.rows.map(user => ({
+          name: user.name,
+          email: user.email,
+          stepcount: user.stepcount,
+          stepgoal: user.stepgoal,
+          paidfor: user.paidfor
+        }));
+
+        // Sends id, user's name, saved stepcount and stepgoal to client memdashboard page
+        res.render("memdashboard", 
+        { user: req.user.name,
+          stepcount: data[0].stepcount,
+          stepgoal: data[0].stepgoal,
+          id: req.user.id,
+          paid: data[0].paidfor 
+        });
+ 
   });
-  
+
 });
 
 app.get("/admindashboard", checkNotAuthenticated, (req, res) => {
@@ -105,8 +127,6 @@ app.get("/trainerdashboard", checkNotAuthenticated, (req, res) => {
          // Sends data to trainerdashboard page
         res.render("trainerdashboard", 
           { user: req.user.name,
-            // stepcount: req.user.stepcount,
-            // stepgoal: req.user.stepgoal,
             id: req.user.id,
 
             // Send list of members to dashboard
@@ -422,7 +442,7 @@ app.post("/find-events-admin", (req, res) => {
 });
 
 // Updates session with given data
-app.post("/new-schedule-data", (req, res) => {
+app.post("/new-schedule-data-admin", (req, res) => {
 
   const title = req.body.newTitle;
   const dateTime = req.body.newDateTime;
@@ -712,6 +732,21 @@ app.post("/sign-up", (req, res) => {
 
 
       }); 
+
+    // Queries fee 
+    pool.query(
+      `UPDATE stats
+      SET paidfor = false
+      WHERE email = $1`,
+      [req.user.email],
+      (err, results) => {
+        if (err) {
+          console.log(err);
+        }
+      }
+    );
+
+
 });
 
 // Find events the user has signed up for
@@ -780,6 +815,23 @@ app.post("/find-events", (req, res) => {
       }); 
 });
 
+// Pay the users fees, set paidfor on stats table to true
+app.post("/pay-fees", (req, res) => {
+
+    // Queries values 
+    pool.query(
+      `UPDATE stats
+      SET paidfor = true
+      WHERE email = $1`,
+      [req.user.email],
+      (err, results) => {
+        if (err) {
+          console.log(err);
+        }
+      }
+    );
+});
+
 // update user current daily steps and step goals
 app.post("/submit-steps-data", (req, res) => {
 
@@ -799,10 +851,10 @@ app.post("/submit-steps-data", (req, res) => {
     
     // Queries values 
     pool.query(
-      `UPDATE users
+      `UPDATE stats
       SET stepcount = $1
-      WHERE id = $2`,
-      [stepCount, id],
+      WHERE email = $2`,
+      [stepCount, req.user.email],
       (err, results) => {
         if (err) {
           console.log(err);
@@ -815,8 +867,8 @@ app.post("/submit-steps-data", (req, res) => {
     pool.query(
       `UPDATE users
       SET stepgoal = $1
-      WHERE id = $2`,
-      [stepGoal, id],
+      WHERE email = $2`,
+      [stepGoal, req.user.email],
       (err, results) => {
         if (err) {
           console.log(err);
