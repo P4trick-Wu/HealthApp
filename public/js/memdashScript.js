@@ -50,6 +50,7 @@ function findYourEvents() {
                         <p>Date: ${date[0]}</p>
                         <p>Start time: ${session.start}</p>
                         <p>Room: ${session.room }</p>
+                        <p>Capacity: ${session.capacity }</p>
                         <p>Turnout: ${session.turnout}</p>
                         <button onclick="deleteUserEvent(this.id, event)" id="button:${session.seshid}" class="btn btn-danger">Delete session</button>
                     </form>
@@ -133,7 +134,7 @@ function findEvents() {
             li.innerHTML += `
                <a class="dropdown-item" href="#" onclick="signUp(this.id)" id="sessionid:${session.seshid}">Title: ${session.title} ,
                 
-                Date: ${date} <br> Start time: ${session.start} <br> Turnout: ${session.turnout}, Room: ${session.room}</a>
+                Date: ${date} <br> Start time: ${session.start}, Capacity: ${session.capacity} <br> Turnout: ${session.turnout}, Room: ${session.room}</a>
             `;
 
             sessionsList.appendChild(li);
@@ -195,38 +196,64 @@ function payFees() {
     });
 }
 
-// Updates user step data
+// Updates user health stats
 function updateSteps() {
     console.log("update steps called");
 
     // Get the values from the input fields
-    let stepCount = document.getElementById("updateStepCount").value;
-    let stepGoal = document.getElementById("updateStepGoal").value;
+    let heartRate = document.getElementById("updateHeartRate").value;
+    let heartRateGoal = document.getElementById("updateHeartRateGoal").value;
+    let weight = document.getElementById("updateWeight").value;
+    let weightGoal = document.getElementById("updateWeightGoal").value;
 
-    if (stepCount > 0) {
-        document.getElementById('stepCountText').innerHTML = stepCount;
+
+    if (heartRate > 0) {
+        document.getElementById('hrText').innerHTML = heartRate;
     } else {
-        stepCount = document.getElementById('stepCountText').innerHTML
+        heartRate = document.getElementById('hrText').innerHTML
     }
-    if(stepGoal > 0) {
-        document.getElementById('stepGoalText').innerHTML = stepGoal;
+    if(heartRateGoal > 0) {
+        document.getElementById('hrGoalText').innerHTML = heartRateGoal;
     } else {
-        stepGoal = document.getElementById('stepGoalText').innerHTML
+        heartRateGoal = document.getElementById('hrGoalText').innerHTML
     }
 
-    // updates progressbar
-    const bar = document.getElementById('stepsProgress');
-    bar.setAttribute("style", "width: " + stepCount / stepGoal * 100 + "%")
+    if (weight > 0) {
+        document.getElementById('weightText').innerHTML = weight;
+    } else {
+        weight = document.getElementById('weightText').innerHTML
+    }
+    if(weightGoal > 0) {
+        document.getElementById('weightGoalText').innerHTML = weightGoal;
+    } else {
+        weightGoal = document.getElementById('weightGoalText').innerHTML
+    }
+
+    // updates progressbars
+    const hrbar = document.getElementById('hrProgress');
+    let percentage = 100 - (heartRate - heartRateGoal)/heartRateGoal * 100
+
+    hrbar.setAttribute("style", "width: " + percentage + "%")
+
+    const weightbar = document.getElementById('weightProgress');
+    percentage = 100 - (weight - weightGoal)/weightGoal * 100
+
+    weightbar.setAttribute("style", "width: " + percentage + "%")
+
+
+
 
     // Create an object with the data to send to the server
     const data = {
-        stepCount: stepCount,
-        stepGoal: stepGoal
+        heartRate: heartRate,
+        heartRateGoal: heartRateGoal,
+        weight: weight,
+        weightGoal: weightGoal
     };
     console.log(data);
 
     // send post request updating steps data to database
-    fetch('/submit-steps-data', {
+    fetch('/update-stats', {
         method: 'POST',
          headers: {
             'Content-Type': 'application/json' 

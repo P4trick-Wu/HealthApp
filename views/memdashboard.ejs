@@ -65,99 +65,157 @@
       </div>
     </div>
 
-    <!-- Steps counter card -->
-    <div class="card" style="width: 18rem">
-      <div class="card-body">
-        <h5 class="card-title">Steps</h5>
-        <h6 class="card-subtitle mb-2 text-body-secondary">
-          Steps taken today
-        </h6>
-        <p class="card-text" id="stepCountText"><%= stepcount %></p>
-        <h6 class="card-subtitle mb-2 text-body-secondary">Daily steps goal</h6>
-        <p class="card-text" id="stepGoalText"><%= stepgoal %></p>
+    <!-- Health stats  -->
+    <div class="card" style="width: 25rem">
+      <div class="row">
+        <div class="col-md-6">
+          <!-- Heart rate body -->
+          <div class="card-body">
+            <h5 class="card-title">Resting heart rate</h5>
+            <h6 class="card-subtitle mb-2 text-body-secondary">
+              Current resting heart rate
+            </h6>
+            <p class="card-text" id="hrText"><%= heartrate %></p>
+            <h6 class="card-subtitle mb-2 text-body-secondary">
+              Heart rate goal
+            </h6>
+            <p class="card-text" id="hrGoalText"><%= heartrategoal %></p>
 
-        <!-- Progress bar -->
-        <div
-          class="progress"
-          role="progressbar"
-          aria-label="Success example"
-          aria-valuenow="25"
-          aria-valuemin="0"
-          aria-valuemax="100"
-        >
-          <div
-            class="progress-bar bg-success"
-            id="stepsProgress"
-            style="<%= style %>"
-          ></div>
+            <!-- Progress bar -->
+            <div
+              class="progress"
+              role="progressbar"
+              aria-label="Success example"
+              aria-valuenow="25"
+              aria-valuemin="0"
+              aria-valuemax="100"
+            >
+              <div
+                class="progress-bar bg-success"
+                id="hrProgress"
+                style="<%= hrstyle %>"
+              ></div>
+            </div>
+            <br />
+          </div>
         </div>
-        <br />
+        <div class="col-md-6">
+          <!-- Weight body -->
+          <div class="card-body">
+            <h5 class="card-title">Weight</h5>
+            <h6 class="card-subtitle mb-2 text-body-secondary">
+              Current Weight
+            </h6>
+            <p class="card-text" id="weightText"><%= weight %></p>
+            <h6 class="card-subtitle mb-2 text-body-secondary">Weight goal</h6>
+            <p class="card-text" id="weightGoalText"><%= weightgoal %></p>
 
-        <!-- Modal for updating data -->
-        <!-- Button trigger modal -->
-        <button
-          type="button"
-          class="btn btn-primary"
-          data-bs-toggle="modal"
-          data-bs-target="#exampleModal"
-        >
-          Update Data
-        </button>
+            <!-- Progress bar -->
+            <div
+              class="progress"
+              role="progressbar"
+              aria-label="Success example"
+              aria-valuenow="25"
+              aria-valuemin="0"
+              aria-valuemax="100"
+            >
+              <div
+                class="progress-bar bg-success"
+                id="weightProgress"
+                style="<%= weightstyle %>"
+              ></div>
+            </div>
+            <br />
+          </div>
+        </div>
+      </div>
 
-        <!-- Modal -->
-        <div
-          class="modal fade"
-          id="exampleModal"
-          tabindex="-1"
-          aria-labelledby="exampleModalLabel"
-          aria-hidden="true"
-        >
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <!-- Input fields for updating data -->
-              <div class="modal-body">
-                <form>
-                  <div class="mb-3">
-                    <label for="updateStepCount" class="form-label"
-                      >Update step count</label
-                    >
-                    <input
-                      type="number"
-                      class="form-control"
-                      id="updateStepCount"
-                      min="0"
-                    />
-                  </div>
-                  <div class="mb-3">
-                    <label for="updateStepGoal" class="form-label"
-                      >Update daily step goal</label
-                    >
-                    <input
-                      type="number"
-                      class="form-control"
-                      id="updateStepGoal"
-                      min="0"
-                    />
-                  </div>
-                </form>
-              </div>
-              <div class="modal-footer">
-                <button
-                  type="button"
-                  class="btn btn-secondary"
-                  data-bs-dismiss="modal"
-                >
-                  Close
-                </button>
-                <button
-                  type="button"
-                  class="btn btn-primary"
-                  id="stepsUpdateButton"
-                  data-bs-dismiss="modal"
-                >
-                  Save changes
-                </button>
-              </div>
+      <!-- Modal for updating data -->
+      <!-- Button trigger modal -->
+      <button
+        type="button"
+        class="btn btn-primary"
+        data-bs-toggle="modal"
+        data-bs-target="#exampleModal"
+      >
+        Update Data
+      </button>
+
+      <!-- Modal -->
+      <div
+        class="modal fade"
+        id="exampleModal"
+        tabindex="-1"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <!-- Input fields for updating data -->
+            <div class="modal-body">
+              <form>
+                <div class="mb-3">
+                  <label for="updateHeartRate" class="form-label"
+                    >Update current heart rate</label
+                  >
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="updateHeartRate"
+                    min="0"
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="updateHeartRateGoal" class="form-label"
+                    >Update heart rate goal</label
+                  >
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="updateHeartRateGoal"
+                    min="0"
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="updateWeight" class="form-label"
+                    >Update current weight</label
+                  >
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="updateWeight"
+                    min="0"
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="updateWeightGoal" class="form-label"
+                    >Update weight goal</label
+                  >
+                  <input
+                    type="number"
+                    class="form-control"
+                    id="updateWeightGoal"
+                    min="0"
+                  />
+                </div>
+              </form>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Close
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary"
+                id="stepsUpdateButton"
+                data-bs-dismiss="modal"
+              >
+                Save changes
+              </button>
             </div>
           </div>
         </div>

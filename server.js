@@ -74,19 +74,25 @@ app.get("/memdashboard", checkNotAuthenticated, (req, res) => {
         const data = results.rows.map(user => ({
           name: user.name,
           email: user.email,
-          stepcount: user.stepcount,
-          stepgoal: user.stepgoal,
-          paidfor: user.paidfor
+          heartrate: user.heartrate,
+          heartrategoal: user.heartrategoal,
+          paidfor: user.paidfor,
+          weight: user.weight,
+          weightgoal: user.weightgoal
         }));
 
-        // Sends id, user's name, saved stepcount and stepgoal to client memdashboard page
+        // Sends id, user's name, saved heartRate and heartRateGoal to client memdashboard page
         res.render("memdashboard", 
         { user: req.user.name,
-          stepcount: data[0].stepcount,
-          stepgoal: data[0].stepgoal,
+          heartrate: data[0].heartrate,
+          heartrategoal: data[0].heartrategoal,
           id: req.user.id,
           paid: data[0].paidfor,
-          style: `width: ${data[0].stepcount / data[0].stepgoal * 100}%`
+          weight: data[0].weight,
+          weightgoal: data[0].weightgoal,
+          // Calculate percentag eof the goal
+          hrstyle: `width: ${100 - (data[0].heartrate - data[0].heartrategoal) / data[0].heartrategoal * 100}%`,
+          weightstyle: `width: ${100 - (data[0].weight - data[0].weightgoal)/ data[0].weightgoal * 100}%`
         });
  
   });
@@ -98,7 +104,7 @@ app.get("/admindashboard", checkNotAuthenticated, (req, res) => {
 
   //gets a list of your classes
 
-  // Sends id, user's name, saved stepcount and stepgoal to client memdashboard page
+  // Sends id, user's name, saved heartRate and heartRateGoal to client memdashboard page
   res.render("admindashboard", 
   { user: req.user.name,
     id: req.user.id
@@ -773,7 +779,8 @@ app.post("/find-your-events", (req, res) => {
           start: session.starttime,
           seshid: session.scheduleid,
           room: session.room,
-          turnout: session.turnout
+          turnout: session.turnout,
+          capacity: session.capacity
       
         }));
 
@@ -806,7 +813,8 @@ app.post("/find-events", (req, res) => {
           start: session.starttime,
           seshid: session.scheduleid,
           room: session.room,
-          turnout: session.turnout
+          turnout: session.turnout,
+          capacity: session.capacity
       
         }));
 
@@ -833,29 +841,29 @@ app.post("/pay-fees", (req, res) => {
     );
 });
 
-// update user current daily steps and step goals
-app.post("/submit-steps-data", (req, res) => {
+// update user stats
+app.post("/update-stats", (req, res) => {
 
-  const { stepCount, stepGoal } = req.body;
+  const { heartRate, heartRateGoal, weight, weightGoal } = req.body;
   const id = req.user.id
 
   // console.log(req.body)
 
   // Log the received data
-  console.log("Received data:", stepCount, stepGoal, " for user ", id);
+  console.log("Received data:", heartRate, heartRateGoal, " for user ", id);
 
   // Send a response back to the client
   res.status(200).send("Data received successfully");
 
   // Update steps database values for user in users table, only updates if user entered a value in the textbox
-  if(stepCount.length > 0) {
+  if(heartRate.length > 0) {
     
     // Queries values 
     pool.query(
       `UPDATE stats
-      SET stepcount = $1
+      SET heartrate = $1
       WHERE email = $2`,
-      [stepCount, req.user.email],
+      [heartRate, req.user.email],
       (err, results) => {
         if (err) {
           console.log(err);
@@ -863,13 +871,13 @@ app.post("/submit-steps-data", (req, res) => {
       }
     );
   }
-  if(stepGoal.length > 0) {
+  if(heartRateGoal.length > 0) {
     
     pool.query(
       `UPDATE stats
-      SET stepgoal = $1
+      SET heartrategoal = $1
       WHERE email = $2`,
-      [stepGoal, req.user.email],
+      [heartRateGoal, req.user.email],
       (err, results) => {
         if (err) {
           console.log(err);
@@ -877,6 +885,29 @@ app.post("/submit-steps-data", (req, res) => {
       }
     );
   }
+   pool.query(
+      `UPDATE stats
+      SET weight = $1
+      WHERE email = $2`,
+      [weight, req.user.email],
+      (err, results) => {
+        if (err) {
+          console.log(err);
+        }
+      }
+    );
+     pool.query(
+      `UPDATE stats
+      SET weightgoal = $1
+      WHERE email = $2`,
+      [weightGoal, req.user.email],
+      (err, results) => {
+        if (err) {
+          console.log(err);
+        }
+      }
+    );
+  
 
 
 });
