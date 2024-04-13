@@ -764,7 +764,7 @@ app.post("/find-your-events", (req, res) => {
       `SELECT s.*
         FROM schedules s
         LEFT JOIN signup su ON s.scheduleid = su.scheduleid 
-        WHERE s.capacity > s.turnout AND su.userid = $1`,
+        WHERE su.userid = $1`,
         [req.user.id],
       (err, results) => {
         if (err) {
