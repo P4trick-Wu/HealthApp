@@ -222,6 +222,98 @@ app.post(
 
 // Admin dashboard post requests
 
+// insert a new equipment into the database
+app.post("/create-equipment", (req, res) => {
+
+    const data = req.body;
+    
+    // Inserts name and capacity into rooms table
+    pool.query(
+      `INSERT INTO equipment (roomid, equipmentname) VALUES (NULL, $1)
+        `, [data.name],
+      (err, results) => {
+        if (err) {
+          console.log(err);
+        }
+
+      }); 
+});
+
+// return all equipment to admin
+app.post("/find-equipment-admin", (req, res) => {
+
+    // Finds all schedule sessions, adding a new column of the names of trainers who created the session based on their trainerid
+    pool.query(
+      `SELECT * from equipment
+    `,
+      (err, results) => {
+        if (err) {
+          console.log(err);
+        }
+
+        // console.log(results.rows)
+
+        // Puts corresponding session title, cost, times and num users back to client
+        const equipment = results.rows.map(item => ({
+          roomid: item.roomid,
+          name: item.equipmentname,
+          durability: item.durability,
+          durabilityRemaining: item.remaining,
+          equipId: item.equipid
+      
+        }));
+
+        // sends data back to client
+        res.json({ data: equipment });
+
+      }); 
+});
+
+// delete equipment from database
+app.post("/delete-equipment", (req, res) => {
+
+    const data = req.body;
+   
+    // deletes equipment with id equivalent to value passed in from equipment table
+    pool.query(
+      `DELETE FROM equipment WHERE equipid = $1
+        `, [data.equipid],
+      (err, results) => {
+        if (err) {
+          console.log(err);
+        }
+
+      }); 
+});
+
+// updates equipment data in database
+app.post("/update-equipment", (req, res) => {
+
+  const name = req.body.name;
+  const durability = req.body.durability;
+  const room = req.body.room;
+  const equipid = req.body.equipid;
+
+  // queries values into database, creating a new schedule 
+  pool.query(
+    `UPDATE equipment
+    SET equipmentname = $1, remaining = $2, roomid = $3 
+    WHERE equipid = $4`,
+    [name, durability, room, equipid],
+    (err, results) => {
+      if (err) {
+        res.status(404).send("Error uplodaing to database");
+        throw err;
+      }
+        //Send response back to client
+        res.status(200).send("Data received successfully");
+    }
+  );
+
+});
+
+
+
 // Inserts new room into database in rooms table
 app.post("/create-new-room", (req, res) => {
 
@@ -243,17 +335,39 @@ app.post("/create-new-room", (req, res) => {
 app.post("/delete-room", (req, res) => {
 
     const data = req.body;
-    
-    // deletes room from room table based on roomId passed in from client
+
+    // Updates the roomid of all equipment in the room to null
     pool.query(
-      `DELETE FROM rooms WHERE roomid = $1
+      `UPDATE equipment SET roomid = NULL WHERE roomid = $1
         `, [data.roomId],
       (err, results) => {
         if (err) {
           console.log(err);
         }
 
+        // deletes room from room table based on roomId passed in from client
+        pool.query(
+          `DELETE FROM rooms WHERE roomid = $1
+            `, [data.roomId],
+          (err, results) => {
+            if (err) {
+              console.log(err);
+            }
+
+          }); 
+
       }); 
+    
+    // // deletes room from room table based on roomId passed in from client
+    // pool.query(
+    //   `DELETE FROM rooms WHERE roomid = $1
+    //     `, [data.roomId],
+    //   (err, results) => {
+    //     if (err) {
+    //       console.log(err);
+    //     }
+
+    //   }); 
 });
 
 // Returns all sessions to admin

@@ -36,6 +36,178 @@ function createRoom() {
     });
 }
 
+// sends data to database to create new equipment
+function createEquipment() {
+    
+    // Store data from input fields and make sure none are empty
+    const equipmentName = document.getElementById('equipmentName').value;
+    if (!equipmentName) {
+        // Display error message to the user
+        alert('Please fill in all fields before submitting.');
+        return;
+    }
+
+    const data = {
+        name: equipmentName
+    };
+
+    // Send data object to server for processing
+    fetch('/create-equipment', {
+        method: 'POST',
+         headers: {
+            'Content-Type': 'application/json' 
+        },
+        // Convert the data to JSON format
+        body: JSON.stringify(data) 
+    }).then(response => {
+        console.log('Response status: ', response.status);
+    }).catch(error => {
+        // something went wrong
+        console.error('Error: ', error.message);
+    });
+}
+
+// gets list of all equipment
+function findEquipment() {
+
+    // Send data object to server for processing
+    fetch('/find-equipment-admin', {
+        method: 'POST',
+         headers: {
+            'Content-Type': 'application/json' 
+        },
+        // body: JSON.stringify(data)
+    }).then(response => {
+        console.log('Response status: ', response.status);
+        return response.json();
+    }).then(responseData => { 
+        // Process the JSON data received from the server, and update webpage
+        
+        const equipment = responseData.data;
+
+        // console.log(equipment)
+       
+        //clear current list
+        const equipmentList = document.getElementById("currentEquipment");
+        equipmentList.innerHTML = "";
+
+        // Iterate over found rooms, making them clickable and selectable along with key info such as room name and capacity.
+        equipment.forEach(item => {
+            const li = document.createElement("li");
+
+            // Added info and delete button option for sessions. Add modification options beside
+            li.innerHTML += ` 
+            <div class="dropdown">
+                    <button
+                        type="button"
+                        class="btn btn-success dropdown-toggle"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                        data-bs-auto-close="outside"
+                    >
+                        ${item.name}
+                    </button>
+                    <form class="dropdown-menu p-4">
+                        <p>Room ID: ${item.roomid }</p>
+                        <p>Durability: ${item.durability}</p>
+                        <p>Remaining durability: ${item.durabilityRemaining}</p>
+                        <button
+                            type="button"
+                            id="modalButton:${item.equipId}"
+                            class="btn btn-primary"
+                            data-bs-toggle="modal"
+                            data-bs-target="#updateEquipment"
+                            onclick="setTrigger(this.id)"
+                            >
+                            Update equipment 
+                        </button>
+                        <button onclick="deleteEquipment(this.id, event)" id="button:${item.equipId}" class="btn btn-danger">Delete equipment</button>
+                    </form>
+                </div>
+                <div style="padding-bottom: 10px;"></div>
+            `;
+            li.id = "equipment:" + item.equipId;
+            equipmentList.appendChild(li);
+        });
+
+
+    }).catch(error => {
+        // Something went wrong
+        console.error('Error: ', error.message);
+    });
+
+}
+
+function updateEquipment() {
+
+    const equipId = triggerModalId;
+
+
+    // Initialize variables
+    let newName = document.getElementById('newEquipmentName').value;
+    let newDurability = document.getElementById('newEquipmentDurabilityRemaining').value;
+    let newRoom = document.getElementById('newEquipmentRoom').value;
+
+     // Check if any of the input fields are empty, makes sure all fields are filled out
+    if (!newName || !newDurability || !newRoom ) {
+        // Display error message to the user
+        console.log(newName, newDurability, newRoom)
+        alert('Please fill in all fields before submitting.');
+        return;
+    }
+
+    const data = {
+        name: newName,
+        durability: newDurability,
+        room: newRoom,
+        equipid: equipId
+    }
+
+     // Send data object to server for processing
+    fetch('/update-equipment', {
+        method: 'POST',
+         headers: {
+            'Content-Type': 'application/json' 
+        },
+        // Convert the data to JSON format
+        body: JSON.stringify(data) 
+    }).then(response => {
+        console.log('Response status: ', response.status);
+    }).catch(error => {
+        // something went wrong
+        console.error('Error: ', error.message);
+    });
+}
+
+function deleteEquipment(equipId, event) {
+
+    // Prevent the default form submission behavior
+    event.preventDefault();
+
+    // Deletes item from client
+    const listItem = document.getElementById("equipment:" + equipId.split(":")[1]);
+    listItem.innerHTML = ""
+
+    const data = {
+        equipid: equipId.split(":")[1] 
+    };
+
+    // send id to server to be deleted
+    fetch('/delete-equipment', {
+        method: 'POST',
+         headers: {
+            'Content-Type': 'application/json' 
+        },
+        // Convert the data to JSON format
+        body: JSON.stringify(data) 
+    }).then(response => {
+        console.log('Response status: ', response.status);
+    }).catch(error => {
+        // something went wrong
+        console.error('Error: ', error.message);
+    });
+}
+
 // updates schedule clicked on by admin
 function updateSchedule() {
 

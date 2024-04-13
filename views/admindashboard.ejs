@@ -25,165 +25,346 @@
     <h5>ID: <%= id %></h5>
     <h5>Usertype: Admin</h5>
 
-    <!-- room management card -->
-    <div class="card" style="width: 25rem">
-      <div class="card-body">
-        <h5 class="card-title">Room management</h5>
+    <div class="container">
+      <div class="row g-0">
+        <div class="col-md-6">
+          <!-- room management card -->
+          <div class="card" style="width: 25rem">
+            <div class="card-body">
+              <h5 class="card-title">Room management</h5>
 
-        <p class="card-text">View your Rooms</p>
+              <p class="card-text">View your Rooms</p>
 
-        <a
-          href="#"
-          onclick="getRooms()"
-          class="btn btn-primary"
-          id="viewRoomsButton"
-          >Get Rooms</a
-        >
-      </div>
+              <a
+                href="#"
+                onclick="getRooms()"
+                class="btn btn-primary"
+                id="viewRoomsButton"
+                >Get Rooms</a
+              >
+            </div>
 
-      <!-- List of rooms -->
-      <ul id="roomsList" style="list-style-type: none"></ul>
+            <!-- List of rooms -->
+            <ul id="roomsList" style="list-style-type: none"></ul>
 
-      <div class="card-body">
-        <p class="card-text">Search for classes/sessions</p>
+            <div class="card-body">
+              <p class="card-text">Search for classes/sessions</p>
 
-        <!-- Modal for sessions -->
-        <a
-          href="#"
-          class="btn btn-primary"
-          onclick="findEvents()"
-          id="findEvents"
-          >Search</a
-        >
-      </div>
+              <!-- Modal for sessions -->
+              <a
+                href="#"
+                class="btn btn-primary"
+                onclick="findEvents()"
+                id="findEvents"
+                >Search</a
+              >
+            </div>
 
-      <!-- list of sessions -->
-      <ul style="list-style-type: none" id="availableSessions"></ul>
+            <!-- list of sessions -->
+            <ul style="list-style-type: none" id="availableSessions"></ul>
 
-      <div class="card-body">
-        <h6 class="card-subtitle mb-2 text-body-secondary">
-          Insert new room below!
-        </h6>
-        <!-- Modal for creating and uploading a new room -->
-        <button
-          type="button"
-          class="btn btn-primary"
-          data-bs-toggle="modal"
-          data-bs-target="#exampleModal"
-        >
-          Upload room
-        </button>
+            <div class="card-body">
+              <h6 class="card-subtitle mb-2 text-body-secondary">
+                Insert new room below!
+              </h6>
+              <!-- Modal for creating and uploading a new room -->
+              <button
+                type="button"
+                class="btn btn-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#exampleModal"
+              >
+                Upload room
+              </button>
 
-        <!-- Modal -->
-        <div
-          class="modal fade"
-          id="exampleModal"
-          tabindex="-1"
-          aria-labelledby="exampleModalLabel"
-          aria-hidden="true"
-        >
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <!-- Input fields for updating data -->
-              <div class="modal-body">
-                <form>
-                  <!-- room name input -->
-                  <div class="mb-3">
-                    <label for="newTitle" class="form-label">Title</label>
-                    <input type="text" class="form-control" id="roomName" />
+              <!-- Modal -->
+              <div
+                class="modal fade"
+                id="exampleModal"
+                tabindex="-1"
+                aria-labelledby="exampleModalLabel"
+                aria-hidden="true"
+              >
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <!-- Input fields for updating data -->
+                    <div class="modal-body">
+                      <form>
+                        <!-- room name input -->
+                        <div class="mb-3">
+                          <label for="newTitle" class="form-label">Title</label>
+                          <input
+                            type="text"
+                            class="form-control"
+                            id="roomName"
+                          />
+                        </div>
+                        <!-- room capacity input -->
+                        <div class="mb-3">
+                          <label for="roomCapacity" class="form-label"
+                            >Capacity</label
+                          >
+                          <input
+                            type="number"
+                            class="form-control"
+                            id="roomCapacity"
+                            min="1"
+                          />
+                        </div>
+                      </form>
+                    </div>
+                    <div class="modal-footer">
+                      <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal"
+                      >
+                        Close
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn-primary"
+                        id="newRoomButton"
+                        data-bs-dismiss="modal"
+                        onclick="createRoom()"
+                      >
+                        Save changes
+                      </button>
+                    </div>
                   </div>
-                  <!-- room capacity input -->
-                  <div class="mb-3">
-                    <label for="roomCapacity" class="form-label"
-                      >Capacity</label
-                    >
-                    <input
-                      type="number"
-                      class="form-control"
-                      id="roomCapacity"
-                      min="1"
-                    />
-                  </div>
-                </form>
+                </div>
               </div>
-              <div class="modal-footer">
-                <button
-                  type="button"
-                  class="btn btn-secondary"
-                  data-bs-dismiss="modal"
-                >
-                  Close
-                </button>
-                <button
-                  type="button"
-                  class="btn btn-primary"
-                  id="newRoomButton"
-                  data-bs-dismiss="modal"
-                  onclick="createRoom()"
-                >
-                  Save changes
-                </button>
+
+              <!-- Modal for updating class schedule -->
+              <div
+                class="modal fade"
+                id="updateClass"
+                tabindex="-1"
+                aria-labelledby="exampleModalLabel"
+                aria-hidden="true"
+              >
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <!-- Input fields for updating data -->
+                    <div class="modal-body">
+                      <form>
+                        <!-- session title -->
+                        <div class="mb-3">
+                          <label for="newTitle" class="form-label">Title</label>
+                          <input
+                            type="text"
+                            class="form-control"
+                            id="newTitle"
+                          />
+                        </div>
+                        <!-- date, start time input -->
+                        <div class="mb-3">
+                          <label for="newDateTime" class="form-label"
+                            >Input date and start time</label
+                          >
+                          <input
+                            type="datetime-local"
+                            class="form-control"
+                            id="newDateTime"
+                          />
+                        </div>
+                        <!-- end time -->
+                        <div class="mb-3">
+                          <label for="newEndTime" class="form-label"
+                            >Input end time</label
+                          >
+                          <input
+                            type="time"
+                            class="form-control"
+                            id="newEndTime"
+                          />
+                        </div>
+                        <div id="chosenRoom"></div>
+                      </form>
+                    </div>
+                    <div class="modal-footer">
+                      <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal"
+                      >
+                        Close
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn-primary"
+                        id="updateScheduleButton"
+                        data-bs-dismiss="modal"
+                        onclick="updateSchedule()"
+                      >
+                        Save changes
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Modal for updating class schedule -->
-        <div
-          class="modal fade"
-          id="updateClass"
-          tabindex="-1"
-          aria-labelledby="exampleModalLabel"
-          aria-hidden="true"
-        >
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <!-- Input fields for updating data -->
-              <div class="modal-body">
-                <form>
-                  <!-- session title -->
-                  <div class="mb-3">
-                    <label for="newTitle" class="form-label">Title</label>
-                    <input type="text" class="form-control" id="newTitle" />
+        <div class="col-md-6">
+          <!-- Equipment monitoring card -->
+          <div class="card" style="width: 25rem">
+            <!-- Body for monitoring equipment -->
+            <div class="card-body">
+              <h5 class="card-title">Equipment Management</h5>
+
+              <p class="card-text">Monitor equipment</p>
+
+              <!-- get equipment button -->
+              <a
+                href="#"
+                class="btn btn-primary"
+                onclick="findEquipment()"
+                id="findEquipment"
+                >Get Equipment</a
+              >
+            </div>
+
+            <!-- List of equipment -->
+            <ul style="list-style-type: none" id="currentEquipment"></ul>
+
+            <!-- body for adding equipmemt -->
+            <div class="card-body">
+              <p>Add new equipment</p>
+
+              <!-- Modal for creating and uploading a new equipment -->
+              <button
+                type="button"
+                class="btn btn-primary"
+                data-bs-toggle="modal"
+                data-bs-target="#createEquipment"
+              >
+                Add equipment
+              </button>
+
+              <!-- Add quipment Modal -->
+              <div
+                class="modal fade"
+                id="createEquipment"
+                tabindex="-1"
+                aria-labelledby="exampleModalLabel"
+                aria-hidden="true"
+              >
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <!-- Input fields for updating data -->
+                    <div class="modal-body">
+                      <form>
+                        <!-- Equipment name input -->
+                        <div class="mb-3">
+                          <label for="newEquipmentName" class="form-label"
+                            >Equipment name</label
+                          >
+                          <input
+                            type="text"
+                            class="form-control"
+                            id="equipmentName"
+                          />
+                        </div>
+                      </form>
+                    </div>
+                    <div class="modal-footer">
+                      <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal"
+                      >
+                        Close
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn-primary"
+                        id="newEquipmentButton"
+                        data-bs-dismiss="modal"
+                        onclick="createEquipment()"
+                      >
+                        Save changes
+                      </button>
+                    </div>
                   </div>
-                  <!-- date, start time input -->
-                  <div class="mb-3">
-                    <label for="newDateTime" class="form-label"
-                      >Input date and start time</label
-                    >
-                    <input
-                      type="datetime-local"
-                      class="form-control"
-                      id="newDateTime"
-                    />
-                  </div>
-                  <!-- end time -->
-                  <div class="mb-3">
-                    <label for="newEndTime" class="form-label"
-                      >Input end time</label
-                    >
-                    <input type="time" class="form-control" id="newEndTime" />
-                  </div>
-                  <div id="chosenRoom"></div>
-                </form>
+                </div>
               </div>
-              <div class="modal-footer">
-                <button
-                  type="button"
-                  class="btn btn-secondary"
-                  data-bs-dismiss="modal"
-                >
-                  Close
-                </button>
-                <button
-                  type="button"
-                  class="btn btn-primary"
-                  id="updateScheduleButton"
-                  data-bs-dismiss="modal"
-                  onclick="updateSchedule()"
-                >
-                  Save changes
-                </button>
+
+              <!-- Updating equipment modal -->
+              <!-- Modal -->
+              <div
+                class="modal fade"
+                id="updateEquipment"
+                tabindex="-1"
+                aria-labelledby="exampleModalLabel"
+                aria-hidden="true"
+              >
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <!-- Input fields for updating data -->
+                    <div class="modal-body">
+                      <form>
+                        <!-- Equipment name input -->
+                        <div class="mb-3">
+                          <label for="newEquipmentName" class="form-label"
+                            >Equipment name</label
+                          >
+                          <input
+                            type="text"
+                            class="form-control"
+                            id="newEquipmentName"
+                          />
+                        </div>
+                        <!-- equipment durability remaining -->
+                        <div class="mb-3">
+                          <label
+                            for="newEquipmentDurabilityRemaining"
+                            class="form-label"
+                            >Change durability remaining</label
+                          >
+                          <input
+                            type="number"
+                            class="form-control"
+                            id="newEquipmentDurabilityRemaining"
+                            min="0"
+                            max="1000"
+                          />
+                        </div>
+                        <!-- Equipment room selection/changing -->
+                        <div class="mb-3">
+                          <label for="newEquipmentRoom" class="form-label"
+                            >Change location</label
+                          >
+                          <input
+                            type="number"
+                            class="form-control"
+                            id="newEquipmentRoom"
+                            min="0"
+                          />
+                        </div>
+                      </form>
+                    </div>
+                    <div class="modal-footer">
+                      <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal"
+                      >
+                        Close
+                      </button>
+                      <button
+                        type="button"
+                        class="btn btn-primary"
+                        id="newEquipmentButton"
+                        data-bs-dismiss="modal"
+                        onclick="updateEquipment()"
+                      >
+                        Save changes
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
