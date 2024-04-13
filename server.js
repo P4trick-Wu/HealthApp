@@ -188,9 +188,24 @@ app.post("/register", async (req, res) => {
               if (err) {
                 throw err;
               }
-              console.log(results.rows);
-              req.flash("success_msg", "You are now registered. Please log in");
-              res.redirect("/login");
+              // insert corresponding user into stats table
+              pool.query(
+                `INSERT INTO stats (email) VALUES ($1)`,
+                [email],
+                (err, results) => {
+                  if (err) {
+                    throw err;
+                  }
+      
+                  console.log(results.rows);
+                  req.flash("success_msg", "You are now registered. Please log in");
+                  res.redirect("/login");
+                }
+              );
+
+              // console.log(results.rows);
+              // req.flash("success_msg", "You are now registered. Please log in");
+              // res.redirect("/login");
             }
           );
         }
@@ -605,8 +620,11 @@ app.post("/find-members", (req, res) => {
 
     // Gets list of all users with matching mame
     pool.query(
-      `SELECT * FROM users
-        WHERE name LIKE '%' || $1 || '%' AND usertype = 'member' ORDER by name ASC`,
+      `SELECT users.*, stats.*
+        FROM users
+        JOIN stats ON users.email = stats.email
+        WHERE users.name LIKE '%' || $1 || '%' AND users.usertype = 'member'
+        ORDER BY users.name ASC`,
       [name]
       ,
       (err, results) => {
@@ -618,7 +636,8 @@ app.post("/find-members", (req, res) => {
         const userList = results.rows.map(user => ({
           name: user.name,
           email: user.email,
-          id: user.id
+          id: user.id,
+          paidfor: user.paidfor
         }));
 
         // console.log(userList)
